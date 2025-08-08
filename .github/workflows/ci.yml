@@ -1,4 +1,4 @@
-name: Code Quality
+name: CI
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  code-quality:
-    name: Code Quality Checks
+  ci:
+    name: Complete CI Pipeline
 
     runs-on: ubuntu-latest
 
@@ -26,16 +26,13 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Run code quality checks
-        run: composer check
-
-      - name: Run PHPUnit with coverage
-        run: composer test:coverage
+      - name: Run all CI checks
+        run: composer ci
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           file: ./coverage.xml
-          flags: code-quality
+          flags: ci
           name: codecov-umbrella
           fail_ci_if_error: false 

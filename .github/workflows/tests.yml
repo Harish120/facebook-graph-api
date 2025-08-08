@@ -60,7 +60,7 @@ jobs:
           composer require "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-progress --dev
 
       - name: Execute tests (Unit and Feature)
-        run: vendor/bin/phpunit
+        run: composer test
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
