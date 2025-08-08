@@ -326,11 +326,51 @@ try {
 
 ## 🧪 Testing
 
-The package includes comprehensive tests. Run them with:
+### **Running Tests**
 
 ```bash
+# Run all tests
 composer test
+
+# Run specific test suites
+composer test:unit
+composer test:feature
+
+# Run with coverage
+composer test:coverage
 ```
+
+### **Code Quality Checks**
+
+```bash
+# Run all quality checks
+composer check
+
+# Run individual checks
+composer pint
+composer phpstan
+composer security
+
+# Fix code formatting
+composer pint:fix
+```
+
+### **CI/CD Pipeline**
+
+This package uses a comprehensive CI/CD pipeline that tests against all supported Laravel versions:
+
+- **Laravel 10.x**: PHP 8.1, 8.2
+- **Laravel 11.x**: PHP 8.2, 8.3  
+- **Laravel 12.x**: PHP 8.3, 8.4
+
+**Quality Gates**:
+- ✅ All tests passing across all Laravel versions
+- ✅ PHPStan analysis clean (level 8)
+- ✅ Laravel Pint formatting check passing
+- ✅ No security vulnerabilities detected
+- ✅ Code coverage >90%
+
+For detailed information, see [CI/CD Setup Documentation](CI_CD_SETUP.md).
 
 ### Testing in Your Application
 

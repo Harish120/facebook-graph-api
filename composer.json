@@ -51,6 +51,25 @@
             }
         }
     },
+    "scripts": {
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-html=build/coverage",
+        "test:unit": "phpunit --testsuite=Unit",
+        "test:feature": "phpunit --testsuite=Feature",
+        "check": [
+            "@pint",
+            "@phpstan"
+        ],
+        "pint": "pint",
+        "pint:fix": "pint --test",
+        "phpstan": "phpstan analyse --memory-limit=512M",
+        "security": "composer audit",
+        "ci": [
+            "@test",
+            "@check",
+            "@security"
+        ]
+    },
     "config": {
         "sort-packages": true
     },

@@ -3,6 +3,9 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         cacheDirectory=".phpunit.cache"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -12,23 +15,30 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
     </testsuites>
+
     <source>
         <include>
             <directory suffix=".php">./src</directory>
         </include>
     </source>
+
     <coverage>
         <report>
-            <html outputDirectory="./build/coverage"/>
-            <clover outputFile="./build/logs/clover.xml"/>
+            <html outputDirectory="build/coverage"/>
+            <clover outputFile="coverage.xml"/>
+            <text outputFile="build/coverage.txt"/>
         </report>
     </coverage>
+
     <php>
         <env name="APP_ENV" value="testing"/>
-        <env name="FACEBOOK_APP_ID" value="test_app_id"/>
-        <env name="FACEBOOK_APP_SECRET" value="test_app_secret"/>
-        <env name="FACEBOOK_GRAPH_VERSION" value="v18.0"/>
-        <env name="FACEBOOK_LOGGING_ENABLED" value="false"/>
-        <env name="FACEBOOK_CACHE_ENABLED" value="false"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
     </php>
 </phpunit> 
