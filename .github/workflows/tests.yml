@@ -57,10 +57,11 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Update composer.json for Laravel version
-        run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-progress --with-all-dependencies
-          composer require "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-progress --dev --with-all-dependencies
+      - name: Install Laravel framework
+        run: composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-progress --with-all-dependencies
+
+      - name: Install Testbench
+        run: composer require "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-progress --dev --with-all-dependencies
 
       - name: Execute tests (Unit and Feature)
         run: composer test:ci
