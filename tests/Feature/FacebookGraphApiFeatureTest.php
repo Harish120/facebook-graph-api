@@ -13,9 +13,12 @@ class FacebookGraphApiFeatureTest extends TestCase
         parent::setUp();
 
         // Configure the package for testing
-        $this->app['config']->set('facebook-graph-api.app_id', 'test_app_id');
-        $this->app['config']->set('facebook-graph-api.app_secret', 'test_app_secret');
-        $this->app['config']->set('facebook-graph-api.default_graph_version', 'v18.0');
+        $app = $this->app;
+        if ($app !== null) {
+            $app['config']->set('facebook-graph-api.app_id', 'test_app_id');
+            $app['config']->set('facebook-graph-api.app_secret', 'test_app_secret');
+            $app['config']->set('facebook-graph-api.default_graph_version', 'v18.0');
+        }
     }
 
     public function test_facade_can_be_resolved(): void
@@ -28,8 +31,11 @@ class FacebookGraphApiFeatureTest extends TestCase
 
     public function test_service_provider_registers_correctly(): void
     {
-        $this->assertTrue($this->app->bound('facebook-graph-api'));
-        $this->assertTrue($this->app->bound(\Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface::class));
+        $app = $this->app;
+        if ($app !== null) {
+            $this->assertTrue($app->bound('facebook-graph-api'));
+            $this->assertTrue($app->bound(\Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface::class));
+        }
     }
 
     public function test_config_can_be_published(): void
@@ -75,23 +81,29 @@ class FacebookGraphApiFeatureTest extends TestCase
 
     public function test_dependency_injection_works(): void
     {
-        $service = $this->app->make(\Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface::class);
+        $app = $this->app;
+        if ($app !== null) {
+            $service = $app->make(\Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface::class);
 
-        $this->assertInstanceOf(
-            \Harryes\FacebookGraphApi\Services\FacebookGraphApiService::class,
-            $service
-        );
+            $this->assertInstanceOf(
+                \Harryes\FacebookGraphApi\Services\FacebookGraphApiService::class,
+                $service
+            );
+        }
     }
 
     public function test_helper_class_can_be_instantiated(): void
     {
-        $service = $this->app->make(\Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface::class);
-        $helper = new \Harryes\FacebookGraphApi\Helpers\FacebookGraphHelper($service);
+        $app = $this->app;
+        if ($app !== null) {
+            $service = $app->make(\Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface::class);
+            $helper = new \Harryes\FacebookGraphApi\Helpers\FacebookGraphHelper($service);
 
-        $this->assertInstanceOf(
-            \Harryes\FacebookGraphApi\Helpers\FacebookGraphHelper::class,
-            $helper
-        );
+            $this->assertInstanceOf(
+                \Harryes\FacebookGraphApi\Helpers\FacebookGraphHelper::class,
+                $helper
+            );
+        }
     }
 
     public function test_batch_request_builder_can_be_created(): void
