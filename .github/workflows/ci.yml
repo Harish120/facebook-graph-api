@@ -26,8 +26,8 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Run all CI checks
-        run: composer ci
+      - name: Run all CI checks with coverage
+        run: composer ci:coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

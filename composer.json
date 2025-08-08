@@ -68,6 +68,12 @@
             "@test",
             "@check",
             "@security"
+        ],
+        "ci:coverage": [
+            "@test",
+            "@check",
+            "@security",
+            "phpunit --coverage-clover=coverage.xml"
         ]
     },
     "config": {

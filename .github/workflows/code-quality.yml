@@ -26,11 +26,10 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Run code quality checks
-        run: composer check
-
-      - name: Run PHPUnit with coverage
-        run: composer test:coverage
+      - name: Run code quality checks and coverage
+        run: |
+          composer check
+          vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
