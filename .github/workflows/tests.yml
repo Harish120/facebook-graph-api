@@ -20,17 +20,6 @@ jobs:
           - laravel: "^10.0"
             php: "8.1"
             testbench: "^8.0"
-          - laravel: "^10.0"
-            php: "8.2"
-            testbench: "^8.0"
-          
-          # Laravel 11.x
-          - laravel: "^11.0"
-            php: "8.2"
-            testbench: "^9.0"
-          - laravel: "^11.0"
-            php: "8.3"
-            testbench: "^9.0"
           
           # Laravel 12.x
           - laravel: "^12.0"
