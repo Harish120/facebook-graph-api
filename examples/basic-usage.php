@@ -2,13 +2,13 @@
 
 /**
  * Basic Usage Examples for Laravel Facebook Graph API Package
- * 
+ *
  * This file demonstrates the basic usage of the package in a Laravel application.
  */
 
-use Harryes\FacebookGraphApi\Facades\FacebookGraph;
 use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
 use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Facades\FacebookGraph;
 
 // Example 1: Using the Facade
 class FacebookController extends Controller
@@ -17,28 +17,29 @@ class FacebookController extends Controller
     {
         try {
             $accessToken = 'your_access_token_here';
-            
+
             // Get user profile with default fields
             $response = FacebookGraph::getUserProfile($accessToken);
-            
+
             if ($response->isSuccessful()) {
                 $userData = $response->getData();
+
                 return response()->json([
                     'success' => true,
-                    'data' => $userData
+                    'data' => $userData,
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
-                'error' => $response->getErrorMessage()
+                'error' => $response->getErrorMessage(),
             ], 400);
-            
+
         } catch (FacebookGraphApiException $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-                'code' => $e->getCode()
+                'code' => $e->getCode(),
             ], 500);
         }
     }
@@ -47,38 +48,38 @@ class FacebookController extends Controller
     {
         try {
             $accessToken = 'your_access_token_here';
-            
+
             // Get user posts with pagination
             $response = FacebookGraph::getUserPosts($accessToken, [
                 'limit' => 10,
-                'fields' => 'id,message,created_time,permalink_url'
+                'fields' => 'id,message,created_time,permalink_url',
             ]);
-            
+
             if ($response->isSuccessful()) {
                 $posts = $response->getData();
-                
+
                 // Check if there are more pages
                 if ($response->hasNextPage()) {
                     $nextPageUrl = $response->getNextPageUrl();
                     // Handle pagination
                 }
-                
+
                 return response()->json([
                     'success' => true,
                     'data' => $posts,
-                    'pagination' => $response->getPagination()
+                    'pagination' => $response->getPagination(),
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
-                'error' => $response->getErrorMessage()
+                'error' => $response->getErrorMessage(),
             ], 400);
-            
+
         } catch (FacebookGraphApiException $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -88,30 +89,31 @@ class FacebookController extends Controller
         try {
             $accessToken = 'your_access_token_here';
             $message = 'Hello from Laravel Facebook Graph API Package!';
-            
+
             // Create a post on user's timeline
             $response = FacebookGraph::post('/me/feed', [
-                'message' => $message
+                'message' => $message,
             ], $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 $postData = $response->getData();
+
                 return response()->json([
                     'success' => true,
                     'data' => $postData,
-                    'message' => 'Post created successfully!'
+                    'message' => 'Post created successfully!',
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
-                'error' => $response->getErrorMessage()
+                'error' => $response->getErrorMessage(),
             ], 400);
-            
+
         } catch (FacebookGraphApiException $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -128,23 +130,22 @@ class FacebookService
     {
         try {
             $response = $this->facebookApi->getPage($pageId, $accessToken, [
-                'id', 'name', 'fan_count', 'category', 'description', 'picture'
+                'id', 'name', 'fan_count', 'category', 'description', 'picture',
             ]);
-            
+
             if ($response->isSuccessful()) {
                 return $response->getData();
             }
-            
+
             throw new \Exception($response->getErrorMessage());
-            
         } catch (FacebookGraphApiException $e) {
             // Log the error
-            \Log::error('Facebook API Error: ' . $e->getMessage(), [
+            \Log::error('Facebook API Error: '.$e->getMessage(), [
                 'page_id' => $pageId,
                 'error_code' => $e->getCode(),
-                'context' => $e->getContext()
+                'context' => $e->getContext(),
             ]);
-            
+
             throw $e;
         }
     }
@@ -153,20 +154,19 @@ class FacebookService
     {
         try {
             $response = $this->facebookApi->createPagePost($pageId, $postData, $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return $response->getData();
             }
-            
+
             throw new \Exception($response->getErrorMessage());
-            
         } catch (FacebookGraphApiException $e) {
-            \Log::error('Facebook API Error: ' . $e->getMessage(), [
+            \Log::error('Facebook API Error: '.$e->getMessage(), [
                 'page_id' => $pageId,
                 'post_data' => $postData,
-                'error_code' => $e->getCode()
+                'error_code' => $e->getCode(),
             ]);
-            
+
             throw $e;
         }
     }
@@ -179,26 +179,25 @@ class FacebookService
                 'page_engaged_users',
                 'page_post_engagements',
                 'page_fan_adds',
-                'page_fan_removes'
+                'page_fan_removes',
             ];
-            
+
             $response = $this->facebookApi->getPageInsights($pageId, $metrics, $accessToken, [
                 'period' => 'day',
-                'limit' => 30
+                'limit' => 30,
             ]);
-            
+
             if ($response->isSuccessful()) {
                 return $response->getData();
             }
-            
+
             throw new \Exception($response->getErrorMessage());
-            
         } catch (FacebookGraphApiException $e) {
-            \Log::error('Facebook API Error: ' . $e->getMessage(), [
+            \Log::error('Facebook API Error: '.$e->getMessage(), [
                 'page_id' => $pageId,
-                'error_code' => $e->getCode()
+                'error_code' => $e->getCode(),
             ]);
-            
+
             throw $e;
         }
     }
@@ -215,15 +214,14 @@ class TokenManager
     {
         try {
             $response = $this->facebookApi->getLongLivedToken($shortLivedToken);
-            
+
             if ($response->isSuccessful()) {
                 return $response->getData();
             }
-            
+
             throw new \Exception($response->getErrorMessage());
-            
         } catch (FacebookGraphApiException $e) {
-            \Log::error('Token Exchange Error: ' . $e->getMessage());
+            \Log::error('Token Exchange Error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -232,15 +230,14 @@ class TokenManager
     {
         try {
             $response = $this->facebookApi->debugToken($accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return $response->getData();
             }
-            
+
             throw new \Exception($response->getErrorMessage());
-            
         } catch (FacebookGraphApiException $e) {
-            \Log::error('Token Validation Error: ' . $e->getMessage());
+            \Log::error('Token Validation Error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -249,6 +246,7 @@ class TokenManager
     {
         try {
             $tokenInfo = $this->validateToken($accessToken);
+
             return $tokenInfo['data']['is_valid'] ?? false;
         } catch (\Exception $e) {
             return false;
@@ -266,26 +264,25 @@ class MediaUploader
     public function uploadPhoto(string $filePath, string $message, string $accessToken): array
     {
         try {
-            if (!file_exists($filePath)) {
+            if (! file_exists($filePath)) {
                 throw new \Exception("File not found: {$filePath}");
             }
-            
+
             $response = $this->facebookApi->upload('/me/photos', $filePath, [
-                'message' => $message
+                'message' => $message,
             ], $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return $response->getData();
             }
-            
+
             throw new \Exception($response->getErrorMessage());
-            
         } catch (FacebookGraphApiException $e) {
-            \Log::error('Photo Upload Error: ' . $e->getMessage(), [
+            \Log::error('Photo Upload Error: '.$e->getMessage(), [
                 'file_path' => $filePath,
-                'error_code' => $e->getCode()
+                'error_code' => $e->getCode(),
             ]);
-            
+
             throw $e;
         }
     }
@@ -293,24 +290,23 @@ class MediaUploader
     public function uploadVideo(string $filePath, array $metadata, string $accessToken): array
     {
         try {
-            if (!file_exists($filePath)) {
+            if (! file_exists($filePath)) {
                 throw new \Exception("File not found: {$filePath}");
             }
-            
+
             $response = $this->facebookApi->upload('/me/videos', $filePath, $metadata, $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return $response->getData();
             }
-            
+
             throw new \Exception($response->getErrorMessage());
-            
         } catch (FacebookGraphApiException $e) {
-            \Log::error('Video Upload Error: ' . $e->getMessage(), [
+            \Log::error('Video Upload Error: '.$e->getMessage(), [
                 'file_path' => $filePath,
-                'error_code' => $e->getCode()
+                'error_code' => $e->getCode(),
             ]);
-            
+
             throw $e;
         }
     }
@@ -325,36 +321,36 @@ class ErrorHandler
             'success' => false,
             'error' => $e->getMessage(),
             'code' => $e->getCode(),
-            'context' => $e->getContext()
+            'context' => $e->getContext(),
         ];
-        
+
         switch ($e->getCode()) {
             case 401:
                 $errorResponse['action'] = 'refresh_token';
                 $errorResponse['message'] = 'Access token is invalid or expired';
                 break;
-                
+
             case 403:
                 $errorResponse['action'] = 'check_permissions';
                 $errorResponse['message'] = 'Insufficient permissions for this operation';
                 break;
-                
+
             case 429:
                 $errorResponse['action'] = 'retry_later';
                 $errorResponse['message'] = 'Rate limit exceeded. Please try again later.';
                 break;
-                
+
             case 404:
                 $errorResponse['action'] = 'check_resource';
                 $errorResponse['message'] = 'Resource not found';
                 break;
-                
+
             default:
                 $errorResponse['action'] = 'contact_support';
                 $errorResponse['message'] = 'An unexpected error occurred';
                 break;
         }
-        
+
         return $errorResponse;
     }
-} 
+}

@@ -2,25 +2,25 @@
 
 namespace Harryes\FacebookGraphApi\Tests\Unit;
 
-use Harryes\FacebookGraphApi\Tests\TestCase;
-use Harryes\FacebookGraphApi\Services\FacebookGraphApiService;
-use Harryes\FacebookGraphApi\Responses\FacebookResponse;
-use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Middleware;
+use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Responses\FacebookResponse;
+use Harryes\FacebookGraphApi\Services\FacebookGraphApiService;
+use Harryes\FacebookGraphApi\Tests\TestCase;
 
 class FacebookGraphApiServiceTest extends TestCase
 {
     protected FacebookGraphApiService $service;
+
     protected array $container = [];
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->service = new FacebookGraphApiService(
             'test_app_id',
             'test_app_secret',
@@ -52,7 +52,7 @@ class FacebookGraphApiServiceTest extends TestCase
     public function it_can_set_and_get_access_token()
     {
         $this->service->setAccessToken('new_access_token');
-        
+
         $this->assertEquals('new_access_token', $this->service->getAccessToken());
     }
 
@@ -60,7 +60,7 @@ class FacebookGraphApiServiceTest extends TestCase
     public function it_can_set_and_get_graph_version()
     {
         $this->service->setGraphVersion('v19.0');
-        
+
         $this->assertEquals('v19.0', $this->service->getGraphVersion());
     }
 
@@ -72,7 +72,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $method->setAccessible(true);
 
         $url = $method->invoke($this->service, '/me', ['fields' => 'id,name']);
-        
+
         $expected = 'https://graph.facebook.com/v18.0/me?fields=id%2Cname';
         $this->assertEquals($expected, $url);
     }
@@ -83,7 +83,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $mockResponse = new Response(200, [], json_encode([
             'id' => '123456789',
             'name' => 'John Doe',
-            'email' => 'john@example.com'
+            'email' => 'john@example.com',
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -96,7 +96,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $property->setValue($this->service, $client);
 
         $response = $this->service->get('/me', ['fields' => 'id,name,email']);
-        
+
         $this->assertInstanceOf(FacebookResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('123456789', $response->get('id'));
@@ -108,7 +108,7 @@ class FacebookGraphApiServiceTest extends TestCase
     {
         $mockResponse = new Response(200, [], json_encode([
             'id' => 'post_123456789',
-            'success' => true
+            'success' => true,
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -121,7 +121,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $property->setValue($this->service, $client);
 
         $response = $this->service->post('/me/feed', ['message' => 'Test post']);
-        
+
         $this->assertInstanceOf(FacebookResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('post_123456789', $response->get('id'));
@@ -134,8 +134,8 @@ class FacebookGraphApiServiceTest extends TestCase
             'error' => [
                 'message' => 'Invalid access token',
                 'type' => 'OAuthException',
-                'code' => 190
-            ]
+                'code' => 190,
+            ],
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -149,7 +149,7 @@ class FacebookGraphApiServiceTest extends TestCase
 
         $this->expectException(FacebookGraphApiException::class);
         $this->expectExceptionMessage('Invalid access token');
-        
+
         $this->service->get('/me');
     }
 
@@ -160,8 +160,8 @@ class FacebookGraphApiServiceTest extends TestCase
             'error' => [
                 'message' => 'Rate limit exceeded',
                 'type' => 'OAuthException',
-                'code' => 4
-            ]
+                'code' => 4,
+            ],
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -175,7 +175,7 @@ class FacebookGraphApiServiceTest extends TestCase
 
         $this->expectException(FacebookGraphApiException::class);
         $this->expectExceptionMessage('Rate limit exceeded');
-        
+
         $this->service->get('/me');
     }
 
@@ -186,8 +186,8 @@ class FacebookGraphApiServiceTest extends TestCase
             'error' => [
                 'message' => 'Permission denied',
                 'type' => 'OAuthException',
-                'code' => 200
-            ]
+                'code' => 200,
+            ],
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -201,7 +201,7 @@ class FacebookGraphApiServiceTest extends TestCase
 
         $this->expectException(FacebookGraphApiException::class);
         $this->expectExceptionMessage('Permission denied');
-        
+
         $this->service->get('/me');
     }
 
@@ -212,8 +212,8 @@ class FacebookGraphApiServiceTest extends TestCase
             'error' => [
                 'message' => 'Resource not found',
                 'type' => 'OAuthException',
-                'code' => 100
-            ]
+                'code' => 100,
+            ],
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -227,7 +227,7 @@ class FacebookGraphApiServiceTest extends TestCase
 
         $this->expectException(FacebookGraphApiException::class);
         $this->expectExceptionMessage('Resource not found');
-        
+
         $this->service->get('/invalid-endpoint');
     }
 
@@ -238,8 +238,8 @@ class FacebookGraphApiServiceTest extends TestCase
             'error' => [
                 'message' => 'Internal server error',
                 'type' => 'OAuthException',
-                'code' => 1
-            ]
+                'code' => 1,
+            ],
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -253,7 +253,7 @@ class FacebookGraphApiServiceTest extends TestCase
 
         $this->expectException(FacebookGraphApiException::class);
         $this->expectExceptionMessage('Internal server error');
-        
+
         $this->service->get('/me');
     }
 
@@ -262,7 +262,7 @@ class FacebookGraphApiServiceTest extends TestCase
     {
         $this->expectException(FacebookGraphApiException::class);
         $this->expectExceptionMessage('File not found: /path/to/nonexistent/file.jpg');
-        
+
         $this->service->upload('/me/photos', '/path/to/nonexistent/file.jpg');
     }
 
@@ -272,7 +272,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $mockResponse = new Response(200, [], json_encode([
             'id' => '123456789',
             'name' => 'John Doe',
-            'email' => 'john@example.com'
+            'email' => 'john@example.com',
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -285,7 +285,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $property->setValue($this->service, $client);
 
         $response = $this->service->getUserProfile();
-        
+
         $this->assertInstanceOf(FacebookResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('123456789', $response->get('id'));
@@ -297,7 +297,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $mockResponse = new Response(200, [], json_encode([
             'id' => 'page_123456789',
             'name' => 'Test Page',
-            'fan_count' => 1000
+            'fan_count' => 1000,
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -310,7 +310,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $property->setValue($this->service, $client);
 
         $response = $this->service->getPage('page_123456789');
-        
+
         $this->assertInstanceOf(FacebookResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('page_123456789', $response->get('id'));
@@ -322,7 +322,7 @@ class FacebookGraphApiServiceTest extends TestCase
     {
         $mockResponse = new Response(200, [], json_encode([
             'id' => 'post_123456789',
-            'success' => true
+            'success' => true,
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -335,7 +335,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $property->setValue($this->service, $client);
 
         $response = $this->service->createPagePost('page_123456789', ['message' => 'Test post']);
-        
+
         $this->assertInstanceOf(FacebookResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('post_123456789', $response->get('id'));
@@ -347,7 +347,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $mockResponse = new Response(200, [], json_encode([
             'access_token' => 'long_lived_token_123456789',
             'token_type' => 'bearer',
-            'expires_in' => 5184000
+            'expires_in' => 5184000,
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -360,7 +360,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $property->setValue($this->service, $client);
 
         $response = $this->service->getLongLivedToken('short_lived_token');
-        
+
         $this->assertInstanceOf(FacebookResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('long_lived_token_123456789', $response->get('access_token'));
@@ -377,8 +377,8 @@ class FacebookGraphApiServiceTest extends TestCase
                 'data_access_expires_at' => 1234567890,
                 'expires_at' => 1234567890,
                 'is_valid' => true,
-                'scopes' => ['email', 'public_profile']
-            ]
+                'scopes' => ['email', 'public_profile'],
+            ],
         ]));
 
         $mock = new MockHandler([$mockResponse]);
@@ -391,10 +391,10 @@ class FacebookGraphApiServiceTest extends TestCase
         $property->setValue($this->service, $client);
 
         $response = $this->service->debugToken('test_token');
-        
+
         $this->assertInstanceOf(FacebookResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('test_app_id', $response->get('data.app_id'));
         $this->assertTrue($response->get('data.is_valid'));
     }
-} 
+}

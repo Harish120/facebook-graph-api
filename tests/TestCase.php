@@ -2,8 +2,8 @@
 
 namespace Harryes\FacebookGraphApi\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
 use Harryes\FacebookGraphApi\FacebookGraphApiServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
@@ -26,9 +26,9 @@ abstract class TestCase extends Orchestra
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         // Setup Facebook Graph API configuration
@@ -39,4 +39,4 @@ abstract class TestCase extends Orchestra
         $app['config']->set('facebook-graph-api.logging.enabled', false);
         $app['config']->set('facebook-graph-api.cache.enabled', false);
     }
-} 
+}

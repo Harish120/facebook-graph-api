@@ -29,4 +29,4 @@ class FacebookGraph extends Facade
     {
         return 'facebook-graph-api';
     }
-} 
+}

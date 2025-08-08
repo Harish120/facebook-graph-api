@@ -65,4 +65,4 @@ interface FacebookGraphApiInterface
      * Get the app secret
      */
     public function getAppSecret(): string;
-} 
+}

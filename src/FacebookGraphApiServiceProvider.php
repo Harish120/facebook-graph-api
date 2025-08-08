@@ -2,9 +2,9 @@
 
 namespace Harryes\FacebookGraphApi;
 
-use Illuminate\Support\ServiceProvider;
-use Harryes\FacebookGraphApi\Services\FacebookGraphApiService;
 use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
+use Harryes\FacebookGraphApi\Services\FacebookGraphApiService;
+use Illuminate\Support\ServiceProvider;
 
 class FacebookGraphApiServiceProvider extends ServiceProvider
 {
@@ -28,7 +28,7 @@ class FacebookGraphApiServiceProvider extends ServiceProvider
         });
 
         $this->app->alias(FacebookGraphApiInterface::class, 'facebook-graph-api');
-        
+
         // Register the facade
         $this->app->singleton('facebook-graph-api', function ($app) {
             return $app->make(FacebookGraphApiInterface::class);
@@ -46,4 +46,4 @@ class FacebookGraphApiServiceProvider extends ServiceProvider
             ], 'facebook-graph-api-config');
         }
     }
-} 
+}

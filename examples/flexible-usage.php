@@ -2,14 +2,14 @@
 
 /**
  * Flexible Usage Examples for Harryes Facebook Graph API Package
- * 
+ *
  * This demonstrates how to use the package as a generic Graph API client
  * that can call ANY endpoint dynamically with proper versioning and parameters.
  */
 
-use Harryes\FacebookGraphApi\Facades\FacebookGraph;
 use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
 use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Facades\FacebookGraph;
 
 // Example 1: Basic usage with Facade - Call any endpoint dynamically
 class FacebookController extends Controller
@@ -18,30 +18,30 @@ class FacebookController extends Controller
     {
         try {
             $accessToken = 'your_access_token_here';
-            
+
             // Call any endpoint with any parameters
             $response = FacebookGraph::get('/me', [
                 'fields' => 'id,name,email,picture,gender,birthday',
-                'locale' => 'en_US'
+                'locale' => 'en_US',
             ], $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return response()->json([
                     'success' => true,
-                    'data' => $response->getData()
+                    'data' => $response->getData(),
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
-                'error' => $response->getErrorMessage()
+                'error' => $response->getErrorMessage(),
             ], 400);
-            
+
         } catch (FacebookGraphApiException $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-                'code' => $e->getCode()
+                'code' => $e->getCode(),
             ], 500);
         }
     }
@@ -51,35 +51,35 @@ class FacebookController extends Controller
         try {
             $postId = '123456789_987654321';
             $accessToken = 'your_access_token_here';
-            
+
             // Get post reactions with any parameters
             $response = FacebookGraph::get("/{$postId}/reactions", [
                 'limit' => 100,
                 'fields' => 'id,name,type,profile_type',
-                'summary' => true
+                'summary' => true,
             ], $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 $data = $response->getData();
-                
+
                 return response()->json([
                     'success' => true,
                     'post_id' => $postId,
                     'reactions' => $data['data'] ?? [],
                     'total_count' => $data['summary']['total_count'] ?? 0,
-                    'pagination' => $response->getPagination()
+                    'pagination' => $response->getPagination(),
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
-                'error' => $response->getErrorMessage()
+                'error' => $response->getErrorMessage(),
             ], 400);
-            
+
         } catch (FacebookGraphApiException $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -89,31 +89,31 @@ class FacebookController extends Controller
         try {
             $pageId = 'your_page_id';
             $accessToken = 'your_page_access_token';
-            
+
             // Create a post with any data
             $response = FacebookGraph::post("/{$pageId}/feed", [
                 'message' => 'Hello from Harryes Facebook Graph API!',
                 'link' => 'https://example.com',
-                'published' => true
+                'published' => true,
             ], $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return response()->json([
                     'success' => true,
                     'post_id' => $response->get('id'),
-                    'data' => $response->getData()
+                    'data' => $response->getData(),
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
-                'error' => $response->getErrorMessage()
+                'error' => $response->getErrorMessage(),
             ], 400);
-            
+
         } catch (FacebookGraphApiException $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -124,31 +124,31 @@ class FacebookController extends Controller
             $pageId = 'your_page_id';
             $accessToken = 'your_page_access_token';
             $filePath = '/path/to/your/image.jpg';
-            
+
             // Upload photo with any metadata
             $response = FacebookGraph::upload("/{$pageId}/photos", $filePath, [
                 'message' => 'Check out this awesome photo!',
-                'published' => true
+                'published' => true,
             ], $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return response()->json([
                     'success' => true,
                     'photo_id' => $response->get('id'),
                     'post_id' => $response->get('post_id'),
-                    'data' => $response->getData()
+                    'data' => $response->getData(),
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
-                'error' => $response->getErrorMessage()
+                'error' => $response->getErrorMessage(),
             ], 400);
-            
+
         } catch (FacebookGraphApiException $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -165,34 +165,34 @@ class FacebookService
     {
         try {
             $response = $this->facebookApi->request($method, $endpoint, $params, $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return [
                     'success' => true,
                     'data' => $response->getData(),
                     'pagination' => $response->getPagination(),
-                    'headers' => $response->getHeaders()
+                    'headers' => $response->getHeaders(),
                 ];
             }
-            
+
             return [
                 'success' => false,
                 'error' => $response->getErrorMessage(),
-                'code' => $response->getErrorCode()
+                'code' => $response->getErrorCode(),
             ];
-            
+
         } catch (FacebookGraphApiException $e) {
-            \Log::error('Facebook API Error: ' . $e->getMessage(), [
+            \Log::error('Facebook API Error: '.$e->getMessage(), [
                 'method' => $method,
                 'endpoint' => $endpoint,
                 'error_code' => $e->getCode(),
-                'context' => $e->getContext()
+                'context' => $e->getContext(),
             ]);
-            
+
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
-                'code' => $e->getCode()
+                'code' => $e->getCode(),
             ];
         }
     }
@@ -204,9 +204,9 @@ class FacebookService
             'period' => 'day',
             'limit' => 30,
             'since' => now()->subDays(30)->timestamp,
-            'until' => now()->timestamp
+            'until' => now()->timestamp,
         ];
-        
+
         return $this->callAnyEndpoint('GET', "/{$pageId}/insights", $params, $accessToken);
     }
 
@@ -216,9 +216,9 @@ class FacebookService
             'grant_type' => 'fb_exchange_token',
             'client_id' => $this->facebookApi->getAppId(),
             'client_secret' => $this->facebookApi->getAppSecret(),
-            'fb_exchange_token' => $shortLivedToken
+            'fb_exchange_token' => $shortLivedToken,
         ];
-        
+
         return $this->callAnyEndpoint('GET', '/oauth/access_token', $params);
     }
 
@@ -226,9 +226,9 @@ class FacebookService
     {
         $params = [
             'input_token' => $accessToken,
-            'access_token' => $this->facebookApi->getAppId() . '|' . $this->facebookApi->getAppSecret()
+            'access_token' => $this->facebookApi->getAppId().'|'.$this->facebookApi->getAppSecret(),
         ];
-        
+
         return $this->callAnyEndpoint('GET', '/debug_token', $params);
     }
 }
@@ -244,33 +244,33 @@ class GraphApiManager
     {
         // Store current version
         $currentVersion = $this->facebookApi->getGraphVersion();
-        
+
         try {
             // Set new version
             $this->facebookApi->setGraphVersion($version);
-            
+
             // Make the request
             $response = $this->facebookApi->request($method, $endpoint, $params, $accessToken);
-            
+
             if ($response->isSuccessful()) {
                 return [
                     'success' => true,
                     'version' => $version,
-                    'data' => $response->getData()
+                    'data' => $response->getData(),
                 ];
             }
-            
+
             return [
                 'success' => false,
                 'version' => $version,
-                'error' => $response->getErrorMessage()
+                'error' => $response->getErrorMessage(),
             ];
-            
+
         } catch (FacebookGraphApiException $e) {
             return [
                 'success' => false,
                 'version' => $version,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         } finally {
             // Restore original version
@@ -282,11 +282,11 @@ class GraphApiManager
     {
         $versions = ['v17.0', 'v18.0', 'v19.0'];
         $results = [];
-        
+
         foreach ($versions as $version) {
             $results[$version] = $this->callWithVersion($version, 'GET', $endpoint, $params);
         }
-        
+
         return $results;
     }
 }
@@ -302,19 +302,19 @@ class BatchRequestHandler
     {
         $allData = [];
         $nextUrl = null;
-        
+
         try {
             // First request
             $response = $this->facebookApi->get($endpoint, $params, $accessToken);
-            
-            if (!$response->isSuccessful()) {
+
+            if (! $response->isSuccessful()) {
                 throw new \Exception($response->getErrorMessage());
             }
-            
+
             $data = $response->getData();
             $allData = array_merge($allData, $data['data'] ?? []);
             $nextUrl = $response->getNextPageUrl();
-            
+
             // Continue pagination
             while ($nextUrl) {
                 // Extract endpoint and params from next URL
@@ -322,32 +322,32 @@ class BatchRequestHandler
                 $path = $parsedUrl['path'] ?? '';
                 $query = $parsedUrl['query'] ?? '';
                 parse_str($query, $queryParams);
-                
+
                 // Remove version prefix from path
                 $endpoint = preg_replace('/^\/v\d+\.\d+/', '', $path);
-                
+
                 $response = $this->facebookApi->get($endpoint, $queryParams, $accessToken);
-                
-                if (!$response->isSuccessful()) {
+
+                if (! $response->isSuccessful()) {
                     break;
                 }
-                
+
                 $data = $response->getData();
                 $allData = array_merge($allData, $data['data'] ?? []);
                 $nextUrl = $response->getNextPageUrl();
             }
-            
+
             return [
                 'success' => true,
                 'total_items' => count($allData),
-                'data' => $allData
+                'data' => $allData,
             ];
-            
+
         } catch (\Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
-                'partial_data' => $allData
+                'partial_data' => $allData,
             ];
         }
     }
@@ -369,7 +369,7 @@ class FlexibleFacebookController extends Controller
             'endpoint' => 'required|string',
             'params' => 'array',
             'access_token' => 'required|string',
-            'version' => 'string'
+            'version' => 'string',
         ]);
 
         $method = $request->input('method');
@@ -382,28 +382,28 @@ class FlexibleFacebookController extends Controller
             if ($version) {
                 // Use specific version
                 $result = $this->versionManager->callWithVersion(
-                    $version, 
-                    $method, 
-                    $endpoint, 
-                    $params, 
+                    $version,
+                    $method,
+                    $endpoint,
+                    $params,
                     $accessToken
                 );
             } else {
                 // Use default version
                 $result = $this->facebookService->callAnyEndpoint(
-                    $method, 
-                    $endpoint, 
-                    $params, 
+                    $method,
+                    $endpoint,
+                    $params,
                     $accessToken
                 );
             }
-            
+
             return response()->json($result);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -412,7 +412,7 @@ class FlexibleFacebookController extends Controller
     {
         $request->validate([
             'post_id' => 'required|string',
-            'access_token' => 'required|string'
+            'access_token' => 'required|string',
         ]);
 
         $postId = $request->input('post_id');
@@ -449,15 +449,15 @@ class FlexibleFacebookController extends Controller
                 'analytics' => [
                     'reactions' => $reactions,
                     'comments' => $comments,
-                    'shares' => $shares
-                ]
+                    'shares' => $shares,
+                ],
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
-} 
+}

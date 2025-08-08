@@ -5,20 +5,26 @@ namespace Harryes\FacebookGraphApi\Services;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
 use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
 use Harryes\FacebookGraphApi\Responses\FacebookResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class FacebookGraphApiService implements FacebookGraphApiInterface
 {
     protected Client $httpClient;
+
     protected string $appId;
+
     protected string $appSecret;
+
     protected string $graphVersion;
+
     protected ?string $accessToken;
+
     protected int $timeout;
+
     protected string $baseUrl = 'https://graph.facebook.com';
 
     public function __construct(
@@ -49,14 +55,14 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     public function request(string $method, string $endpoint, array $params = [], ?string $accessToken = null): FacebookResponse
     {
         $token = $accessToken ?? $this->accessToken;
-        
-        if (!$token) {
+
+        if (! $token) {
             throw FacebookGraphApiException::invalidAccessToken('No access token provided');
         }
 
         $params['access_token'] = $token;
         $url = $this->buildUrl($endpoint, $params);
-        
+
         return $this->makeRequest($method, $url, $params);
     }
 
@@ -98,18 +104,18 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     public function upload(string $endpoint, string $filePath, array $data = [], ?string $accessToken = null): FacebookResponse
     {
         $token = $accessToken ?? $this->accessToken;
-        
-        if (!$token) {
+
+        if (! $token) {
             throw FacebookGraphApiException::invalidAccessToken('No access token provided');
         }
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             throw FacebookGraphApiException::invalidRequest("File not found: {$filePath}");
         }
 
         $data['access_token'] = $token;
         $url = $this->buildUrl($endpoint);
-        
+
         $multipart = [];
         foreach ($data as $key => $value) {
             $multipart[] = [
@@ -133,6 +139,7 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     public function setAccessToken(string $accessToken): self
     {
         $this->accessToken = $accessToken;
+
         return $this;
     }
 
@@ -150,6 +157,7 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     public function setGraphVersion(string $version): self
     {
         $this->graphVersion = $version;
+
         return $this;
     }
 
@@ -183,9 +191,9 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     protected function buildUrl(string $endpoint, array $params = []): string
     {
         $url = "{$this->baseUrl}/{$this->graphVersion}{$endpoint}";
-        
-        if (!empty($params)) {
-            $url .= '?' . http_build_query($params);
+
+        if (! empty($params)) {
+            $url .= '?'.http_build_query($params);
         }
 
         return $url;
@@ -197,7 +205,7 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     protected function makeRequest(string $method, string $url, array $data = [], array $multipart = []): FacebookResponse
     {
         $cacheKey = $this->generateCacheKey($method, $url, $data);
-        
+
         // Check cache for GET requests
         if ($method === 'GET' && config('facebook-graph-api.cache.enabled', false)) {
             $cached = Cache::get($cacheKey);
@@ -207,35 +215,35 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
         }
 
         $options = [];
-        
-        if (!empty($data) && $method !== 'GET') {
+
+        if (! empty($data) && $method !== 'GET') {
             $options['form_params'] = $data;
         }
-        
-        if (!empty($multipart)) {
+
+        if (! empty($multipart)) {
             $options['multipart'] = $multipart;
         }
 
         try {
             $this->logRequest($method, $url, $data);
-            
+
             $response = $this->httpClient->request($method, $url, $options);
-            
+
             $responseData = json_decode($response->getBody()->getContents(), true);
             $statusCode = $response->getStatusCode();
-            
+
             $facebookResponse = new FacebookResponse($responseData, $response->getHeaders(), $statusCode);
-            
+
             $this->logResponse($method, $url, $facebookResponse);
-            
+
             // Cache successful GET responses
             if ($method === 'GET' && $facebookResponse->isSuccessful() && config('facebook-graph-api.cache.enabled', false)) {
                 $ttl = config('facebook-graph-api.cache.ttl', 3600);
                 Cache::put($cacheKey, $facebookResponse, $ttl);
             }
-            
+
             return $facebookResponse;
-            
+
         } catch (ClientException $e) {
             $this->handleClientException($e);
         } catch (ServerException $e) {
@@ -257,10 +265,10 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
         $response = $e->getResponse();
         $statusCode = $response->getStatusCode();
         $body = json_decode($response->getBody()->getContents(), true);
-        
+
         $errorMessage = $body['error']['message'] ?? 'Client error occurred';
         $errorCode = $body['error']['code'] ?? $statusCode;
-        
+
         switch ($statusCode) {
             case 400:
                 throw FacebookGraphApiException::invalidRequest($errorMessage);
@@ -285,9 +293,9 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     {
         $response = $e->getResponse();
         $body = json_decode($response->getBody()->getContents(), true);
-        
+
         $errorMessage = $body['error']['message'] ?? 'Server error occurred';
-        
+
         throw FacebookGraphApiException::serverError($errorMessage);
     }
 
@@ -297,8 +305,8 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     protected function generateCacheKey(string $method, string $url, array $data): string
     {
         $prefix = config('facebook-graph-api.cache.prefix', 'facebook_graph_api');
-        $hash = md5($method . $url . json_encode($data));
-        
+        $hash = md5($method.$url.json_encode($data));
+
         return "{$prefix}:{$hash}";
     }
 
@@ -307,16 +315,16 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
      */
     protected function logRequest(string $method, string $url, array $data): void
     {
-        if (!config('facebook-graph-api.logging.enabled', false)) {
+        if (! config('facebook-graph-api.logging.enabled', false)) {
             return;
         }
 
         Log::channel(config('facebook-graph-api.logging.channel', 'stack'))
-           ->log(config('facebook-graph-api.logging.level', 'info'), 'Facebook Graph API Request', [
-               'method' => $method,
-               'url' => $url,
-               'data' => $data,
-           ]);
+            ->log(config('facebook-graph-api.logging.level', 'info'), 'Facebook Graph API Request', [
+                'method' => $method,
+                'url' => $url,
+                'data' => $data,
+            ]);
     }
 
     /**
@@ -324,17 +332,17 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
      */
     protected function logResponse(string $method, string $url, FacebookResponse $response): void
     {
-        if (!config('facebook-graph-api.logging.enabled', false)) {
+        if (! config('facebook-graph-api.logging.enabled', false)) {
             return;
         }
 
         Log::channel(config('facebook-graph-api.logging.channel', 'stack'))
-           ->log(config('facebook-graph-api.logging.level', 'info'), 'Facebook Graph API Response', [
-               'method' => $method,
-               'url' => $url,
-               'status_code' => $response->getStatusCode(),
-               'successful' => $response->isSuccessful(),
-               'has_error' => $response->hasError(),
-           ]);
+            ->log(config('facebook-graph-api.logging.level', 'info'), 'Facebook Graph API Response', [
+                'method' => $method,
+                'url' => $url,
+                'status_code' => $response->getStatusCode(),
+                'successful' => $response->isSuccessful(),
+                'has_error' => $response->hasError(),
+            ]);
     }
-} 
+}

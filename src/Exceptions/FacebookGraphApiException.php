@@ -22,7 +22,7 @@ class FacebookGraphApiException extends Exception
     public static function invalidAccessToken(string $token = ''): self
     {
         return new self(
-            'Invalid access token provided' . ($token ? ": {$token}" : ''),
+            'Invalid access token provided'.($token ? ": {$token}" : ''),
             401,
             null,
             ['token' => $token]
@@ -42,7 +42,7 @@ class FacebookGraphApiException extends Exception
     public static function permissionDenied(string $permission = ''): self
     {
         return new self(
-            'Permission denied' . ($permission ? " for: {$permission}" : ''),
+            'Permission denied'.($permission ? " for: {$permission}" : ''),
             403,
             null,
             ['permission' => $permission]
@@ -52,7 +52,7 @@ class FacebookGraphApiException extends Exception
     public static function resourceNotFound(string $resource = ''): self
     {
         return new self(
-            'Resource not found' . ($resource ? ": {$resource}" : ''),
+            'Resource not found'.($resource ? ": {$resource}" : ''),
             404,
             null,
             ['resource' => $resource]
@@ -62,7 +62,7 @@ class FacebookGraphApiException extends Exception
     public static function invalidRequest(string $details = ''): self
     {
         return new self(
-            'Invalid request' . ($details ? ": {$details}" : ''),
+            'Invalid request'.($details ? ": {$details}" : ''),
             400,
             null,
             ['details' => $details]
@@ -72,10 +72,10 @@ class FacebookGraphApiException extends Exception
     public static function serverError(string $details = ''): self
     {
         return new self(
-            'Facebook server error' . ($details ? ": {$details}" : ''),
+            'Facebook server error'.($details ? ": {$details}" : ''),
             500,
             null,
             ['details' => $details]
         );
     }
-} 
+}

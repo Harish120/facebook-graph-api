@@ -113,4 +113,4 @@ return [
         'page' => ['id', 'name', 'fan_count', 'category', 'picture'],
         'post' => ['id', 'message', 'created_time', 'type', 'permalink_url'],
     ],
-]; 
+];

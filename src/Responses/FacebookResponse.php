@@ -2,15 +2,19 @@
 
 namespace Harryes\FacebookGraphApi\Responses;
 
-use Illuminate\Support\Collection;
 use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Illuminate\Support\Collection;
 
 class FacebookResponse
 {
     protected array $data;
+
     protected array $headers;
+
     protected int $statusCode;
+
     protected ?array $pagination;
+
     protected ?array $error;
 
     public function __construct(array $data, array $headers = [], int $statusCode = 200)
@@ -51,7 +55,7 @@ class FacebookResponse
      */
     public function isSuccessful(): bool
     {
-        return $this->statusCode >= 200 && $this->statusCode < 300 && !$this->hasError();
+        return $this->statusCode >= 200 && $this->statusCode < 300 && ! $this->hasError();
     }
 
     /**
@@ -217,4 +221,4 @@ class FacebookResponse
     {
         return $this->toJson();
     }
-} 
+}
