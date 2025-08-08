@@ -8,7 +8,9 @@ use Harryes\FacebookGraphApi\Responses\FacebookResponse;
 class FacebookBatchRequestBuilder
 {
     protected FacebookGraphApiInterface $facebookApi;
+
     protected array $requests = [];
+
     protected ?string $accessToken = null;
 
     public function __construct(FacebookGraphApiInterface $facebookApi)
@@ -97,6 +99,7 @@ class FacebookBatchRequestBuilder
     public function withAccessToken(string $accessToken): self
     {
         $this->accessToken = $accessToken;
+
         return $this;
     }
 
@@ -122,6 +125,7 @@ class FacebookBatchRequestBuilder
     public function clear(): self
     {
         $this->requests = [];
+
         return $this;
     }
 
@@ -132,4 +136,4 @@ class FacebookBatchRequestBuilder
     {
         return count($this->requests);
     }
-} 
+}

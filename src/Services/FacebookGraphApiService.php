@@ -135,10 +135,9 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
 
     /**
      * Send batch requests to Facebook Graph API
-     * 
-     * @param array $requests Array of request arrays with keys: method, endpoint, params, name
-     * @param string|null $accessToken Access token for the batch request
-     * @return FacebookResponse
+     *
+     * @param  array  $requests  Array of request arrays with keys: method, endpoint, params, name
+     * @param  string|null  $accessToken  Access token for the batch request
      */
     public function sendBatchRequest(array $requests, ?string $accessToken = null): FacebookResponse
     {
@@ -163,8 +162,8 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
 
     /**
      * Prepare batch requests for the Facebook Graph API
-     * 
-     * @param array $requests Array of request arrays
+     *
+     * @param  array  $requests  Array of request arrays
      * @return array Prepared batch requests
      */
     protected function prepareBatchRequests(array $requests): array
@@ -176,13 +175,13 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
             $method = $request['method'] ?? 'GET';
             $endpoint = $request['endpoint'] ?? '';
             $params = $request['params'] ?? [];
-            $name = $request['name'] ?? 'request_' . $nameCounter++;
+            $name = $request['name'] ?? 'request_'.$nameCounter++;
 
             // Build the relative URL
-            $relativeUrl = $this->graphVersion . $endpoint;
-            
-            if ($method === 'GET' && !empty($params)) {
-                $relativeUrl .= '?' . http_build_query($params);
+            $relativeUrl = $this->graphVersion.$endpoint;
+
+            if ($method === 'GET' && ! empty($params)) {
+                $relativeUrl .= '?'.http_build_query($params);
             }
 
             $batchRequest = [
@@ -192,7 +191,7 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
             ];
 
             // Add body for non-GET requests
-            if ($method !== 'GET' && !empty($params)) {
+            if ($method !== 'GET' && ! empty($params)) {
                 $batchRequest['body'] = http_build_query($params);
             }
 
@@ -204,8 +203,6 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
 
     /**
      * Create a batch request builder for chaining multiple requests
-     * 
-     * @return FacebookBatchRequestBuilder
      */
     public function createBatchRequest(): FacebookBatchRequestBuilder
     {
