@@ -7,7 +7,6 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
-use Harryes\FacebookGraphApi\Responses\FacebookResponse;
 use Harryes\FacebookGraphApi\Services\FacebookGraphApiService;
 use Harryes\FacebookGraphApi\Tests\TestCase;
 
@@ -45,12 +44,14 @@ class FacebookGraphApiServiceTest extends TestCase
 
     public function test_it_builds_correct_urls(): void
     {
-        $this->service->setGraphVersion('v18.0');
-        $this->service->setAccessToken('test_token');
+        $reflection = new \ReflectionClass($this->service);
+        $method = $reflection->getMethod('buildUrl');
+        $method->setAccessible(true);
 
-        $response = $this->service->get('/me', ['fields' => 'id,name']);
+        $url = $method->invoke($this->service, '/me', ['fields' => 'id,name']);
 
-        $this->assertInstanceOf(FacebookResponse::class, $response);
+        $expected = 'https://graph.facebook.com/v18.0/me?fields=id%2Cname';
+        $this->assertEquals($expected, $url);
     }
 
     public function test_it_handles_successful_get_request(): void
@@ -348,6 +349,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $client = new Client(['handler' => $handlerStack]);
 
         $service = new FacebookGraphApiService('app_id', 'app_secret');
+        $service->setAccessToken('test_token');
 
         // Use reflection to set the mock client
         $reflection = new \ReflectionClass($service);
@@ -387,6 +389,7 @@ class FacebookGraphApiServiceTest extends TestCase
         $client = new Client(['handler' => $handlerStack]);
 
         $service = new FacebookGraphApiService('app_id', 'app_secret');
+        $service->setAccessToken('test_token');
 
         // Use reflection to set the mock client
         $reflection = new \ReflectionClass($service);
