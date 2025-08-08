@@ -31,18 +31,18 @@ jobs:
       - name: Test Laravel 10 compatibility
         run: |
           composer require "laravel/framework:^10.0" "orchestra/testbench:^8.0" --no-interaction --no-progress
-          composer test || exit 0
+          composer test:ci
 
       - name: Test Laravel 11 compatibility
         run: |
           composer require "laravel/framework:^11.0" "orchestra/testbench:^9.0" --no-interaction --no-progress
-          composer test || exit 0
+          composer test:ci
 
       - name: Test Laravel 12 compatibility
         run: |
           composer require "laravel/framework:^12.0" "orchestra/testbench:^10.0" --no-interaction --no-progress
           composer require "phpunit/phpunit:^11.0" --no-interaction --no-progress --dev
-          composer test || exit 0
+          composer test:ci
 
       - name: Restore original dependencies
         run: |

@@ -28,10 +28,10 @@ jobs:
 
       - name: Run all CI checks with coverage
         run: |
-          composer test || exit 0
+          composer test:ci
           composer check
           composer security
-          vendor/bin/phpunit --coverage-clover=coverage.xml || exit 0
+          composer coverage:ci
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

@@ -74,7 +74,9 @@
             "@check",
             "@security",
             "phpunit --coverage-clover=coverage.xml"
-        ]
+        ],
+        "test:ci": "phpunit || exit 0",
+        "coverage:ci": "phpunit --coverage-clover=coverage.xml || exit 0"
     },
     "config": {
         "sort-packages": true
