@@ -60,27 +60,39 @@ FACEBOOK_CACHE_TTL=3600
 
 ### Basic Usage
 
-#### Using the Facade
+#### Using the Facade - Call ANY endpoint dynamically
 
 ```php
 use Harryes\FacebookGraphApi\Facades\FacebookGraph;
 
-// Get user profile
-$userProfile = FacebookGraph::getUserProfile($accessToken);
+// Get user profile with any fields
+$response = FacebookGraph::get('/me', [
+    'fields' => 'id,name,email,picture,gender,birthday',
+    'locale' => 'en_US'
+], $accessToken);
 
-// Get user posts
-$userPosts = FacebookGraph::getUserPosts($accessToken, ['limit' => 10]);
+// Get post reactions with any parameters
+$response = FacebookGraph::get('/{post_id}/reactions', [
+    'limit' => 100,
+    'fields' => 'id,name,type,profile_type',
+    'summary' => true
+], $accessToken);
 
-// Get page information
-$pageInfo = FacebookGraph::getPage('page_id', $accessToken);
+// Create a page post with any data
+$response = FacebookGraph::post('/{page_id}/feed', [
+    'message' => 'Hello from Harryes Facebook Graph API!',
+    'link' => 'https://example.com',
+    'published' => true
+], $accessToken);
 
-// Create a post on a page
-$post = FacebookGraph::createPagePost('page_id', [
-    'message' => 'Hello from Laravel!'
+// Upload a photo with any metadata
+$response = FacebookGraph::upload('/{page_id}/photos', '/path/to/image.jpg', [
+    'message' => 'Check out this photo!',
+    'published' => true
 ], $accessToken);
 ```
 
-#### Using Dependency Injection
+#### Using Dependency Injection - More flexible approach
 
 ```php
 use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
@@ -91,9 +103,13 @@ class FacebookController extends Controller
         private FacebookGraphApiInterface $facebookApi
     ) {}
 
-    public function getUserProfile()
+    public function callAnyEndpoint()
     {
-        $response = $this->facebookApi->getUserProfile($accessToken);
+        // Call ANY Graph API endpoint with any parameters
+        $response = $this->facebookApi->request('GET', '/me', [
+            'fields' => 'id,name,email,picture',
+            'locale' => 'en_US'
+        ], $accessToken);
         
         if ($response->isSuccessful()) {
             return response()->json($response->getData());
@@ -101,32 +117,66 @@ class FacebookController extends Controller
         
         return response()->json(['error' => $response->getErrorMessage()], 400);
     }
+
+    public function getPostReactions()
+    {
+        $response = $this->facebookApi->get('/{post_id}/reactions', [
+            'limit' => 100,
+            'fields' => 'id,name,type',
+            'summary' => true
+        ], $accessToken);
+        
+        return response()->json($response->getData());
+    }
 }
 ```
 
 ### Advanced Usage
 
-#### Custom API Requests
+#### Dynamic Graph API Version Management
 
 ```php
-// GET request
+// Set version for specific requests
+FacebookGraph::setGraphVersion('v19.0');
+
+// Call any endpoint with the new version
 $response = FacebookGraph::get('/me', [
     'fields' => 'id,name,email,picture'
 ], $accessToken);
 
-// POST request
-$response = FacebookGraph::post('/me/feed', [
-    'message' => 'Custom post message',
-    'link' => 'https://example.com'
+// Switch back to default version
+FacebookGraph::setGraphVersion('v18.0');
+```
+
+#### Custom API Requests - Call ANY endpoint
+
+```php
+// GET request to any endpoint
+$response = FacebookGraph::get('/{user_id}/posts', [
+    'limit' => 25,
+    'fields' => 'id,message,created_time,permalink_url'
 ], $accessToken);
 
-// PUT request
-$response = FacebookGraph::put('/post_id', [
+// POST request to any endpoint
+$response = FacebookGraph::post('/{page_id}/feed', [
+    'message' => 'Custom post message',
+    'link' => 'https://example.com',
+    'published' => true
+], $accessToken);
+
+// PUT request to any endpoint
+$response = FacebookGraph::put('/{post_id}', [
     'message' => 'Updated message'
 ], $accessToken);
 
-// DELETE request
-$response = FacebookGraph::delete('/post_id', $accessToken);
+// DELETE request to any endpoint
+$response = FacebookGraph::delete('/{post_id}', $accessToken);
+
+// Generic request method
+$response = FacebookGraph::request('GET', '/{endpoint}', [
+    'param1' => 'value1',
+    'param2' => 'value2'
+], $accessToken);
 ```
 
 #### File Upload

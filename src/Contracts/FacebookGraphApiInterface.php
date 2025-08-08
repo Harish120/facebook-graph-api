@@ -3,32 +3,36 @@
 namespace Harryes\FacebookGraphApi\Contracts;
 
 use Harryes\FacebookGraphApi\Responses\FacebookResponse;
-use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
 
 interface FacebookGraphApiInterface
 {
     /**
-     * Make a GET request to Facebook Graph API
+     * Make a generic request to any Facebook Graph API endpoint
+     */
+    public function request(string $method, string $endpoint, array $params = [], ?string $accessToken = null): FacebookResponse;
+
+    /**
+     * GET request to any endpoint
      */
     public function get(string $endpoint, array $params = [], ?string $accessToken = null): FacebookResponse;
 
     /**
-     * Make a POST request to Facebook Graph API
+     * POST request to any endpoint
      */
     public function post(string $endpoint, array $data = [], ?string $accessToken = null): FacebookResponse;
 
     /**
-     * Make a PUT request to Facebook Graph API
+     * PUT request to any endpoint
      */
     public function put(string $endpoint, array $data = [], ?string $accessToken = null): FacebookResponse;
 
     /**
-     * Make a DELETE request to Facebook Graph API
+     * DELETE request to any endpoint
      */
     public function delete(string $endpoint, ?string $accessToken = null): FacebookResponse;
 
     /**
-     * Upload a file to Facebook Graph API
+     * Upload a file to any endpoint
      */
     public function upload(string $endpoint, string $filePath, array $data = [], ?string $accessToken = null): FacebookResponse;
 
@@ -53,47 +57,12 @@ interface FacebookGraphApiInterface
     public function getGraphVersion(): string;
 
     /**
-     * Get user profile information
+     * Get the app ID
      */
-    public function getUserProfile(?string $accessToken = null, array $fields = ['id', 'name', 'email']): FacebookResponse;
+    public function getAppId(): string;
 
     /**
-     * Get user posts
+     * Get the app secret
      */
-    public function getUserPosts(?string $accessToken = null, array $params = []): FacebookResponse;
-
-    /**
-     * Get page information
-     */
-    public function getPage(string $pageId, ?string $accessToken = null, array $fields = ['id', 'name', 'fan_count']): FacebookResponse;
-
-    /**
-     * Get page posts
-     */
-    public function getPagePosts(string $pageId, ?string $accessToken = null, array $params = []): FacebookResponse;
-
-    /**
-     * Create a post on a page
-     */
-    public function createPagePost(string $pageId, array $data, ?string $accessToken = null): FacebookResponse;
-
-    /**
-     * Get page insights
-     */
-    public function getPageInsights(string $pageId, array $metrics, ?string $accessToken = null, array $params = []): FacebookResponse;
-
-    /**
-     * Get user accounts (pages)
-     */
-    public function getUserAccounts(?string $accessToken = null): FacebookResponse;
-
-    /**
-     * Get long-lived access token
-     */
-    public function getLongLivedToken(string $shortLivedToken): FacebookResponse;
-
-    /**
-     * Get debug token information
-     */
-    public function debugToken(string $accessToken): FacebookResponse;
+    public function getAppSecret(): string;
 } 

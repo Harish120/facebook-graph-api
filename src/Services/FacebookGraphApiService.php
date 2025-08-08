@@ -37,92 +37,77 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
         $this->httpClient = new Client([
             'timeout' => $this->timeout,
             'headers' => [
-                'User-Agent' => 'Laravel-Facebook-Graph-API/1.0',
+                'User-Agent' => 'Harryes-Facebook-Graph-API/1.0',
                 'Accept' => 'application/json',
             ],
         ]);
     }
 
     /**
-     * Get the app ID
+     * Make a generic request to any Facebook Graph API endpoint
      */
-    public function getAppId(): string
+    public function request(string $method, string $endpoint, array $params = [], ?string $accessToken = null): FacebookResponse
     {
-        return $this->appId;
+        $token = $accessToken ?? $this->accessToken;
+        
+        if (!$token) {
+            throw FacebookGraphApiException::invalidAccessToken('No access token provided');
+        }
+
+        $params['access_token'] = $token;
+        $url = $this->buildUrl($endpoint, $params);
+        
+        return $this->makeRequest($method, $url, $params);
     }
 
     /**
-     * Get the app secret
-     */
-    public function getAppSecret(): string
-    {
-        return $this->appSecret;
-    }
-
-    /**
-     * Make a GET request to Facebook Graph API
+     * GET request to any endpoint
      */
     public function get(string $endpoint, array $params = [], ?string $accessToken = null): FacebookResponse
     {
-        $token = $accessToken ?? $this->accessToken;
-        $params['access_token'] = $token;
-
-        $url = $this->buildUrl($endpoint, $params);
-        
-        return $this->makeRequest('GET', $url);
+        return $this->request('GET', $endpoint, $params, $accessToken);
     }
 
     /**
-     * Make a POST request to Facebook Graph API
+     * POST request to any endpoint
      */
     public function post(string $endpoint, array $data = [], ?string $accessToken = null): FacebookResponse
     {
-        $token = $accessToken ?? $this->accessToken;
-        $data['access_token'] = $token;
-
-        $url = $this->buildUrl($endpoint);
-        
-        return $this->makeRequest('POST', $url, $data);
+        return $this->request('POST', $endpoint, $data, $accessToken);
     }
 
     /**
-     * Make a PUT request to Facebook Graph API
+     * PUT request to any endpoint
      */
     public function put(string $endpoint, array $data = [], ?string $accessToken = null): FacebookResponse
     {
-        $token = $accessToken ?? $this->accessToken;
-        $data['access_token'] = $token;
-
-        $url = $this->buildUrl($endpoint);
-        
-        return $this->makeRequest('PUT', $url, $data);
+        return $this->request('PUT', $endpoint, $data, $accessToken);
     }
 
     /**
-     * Make a DELETE request to Facebook Graph API
+     * DELETE request to any endpoint
      */
     public function delete(string $endpoint, ?string $accessToken = null): FacebookResponse
     {
-        $token = $accessToken ?? $this->accessToken;
-        $params = ['access_token' => $token];
-
-        $url = $this->buildUrl($endpoint, $params);
-        
-        return $this->makeRequest('DELETE', $url);
+        return $this->request('DELETE', $endpoint, [], $accessToken);
     }
 
     /**
-     * Upload a file to Facebook Graph API
+     * Upload a file to any endpoint
      */
     public function upload(string $endpoint, string $filePath, array $data = [], ?string $accessToken = null): FacebookResponse
     {
         $token = $accessToken ?? $this->accessToken;
-        $data['access_token'] = $token;
+        
+        if (!$token) {
+            throw FacebookGraphApiException::invalidAccessToken('No access token provided');
+        }
 
         if (!file_exists($filePath)) {
             throw FacebookGraphApiException::invalidRequest("File not found: {$filePath}");
         }
 
+        $data['access_token'] = $token;
         $url = $this->buildUrl($endpoint);
         
         $multipart = [];
@@ -177,102 +162,19 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     }
 
     /**
-     * Get user profile information
+     * Get the app ID
      */
-    public function getUserProfile(?string $accessToken = null, array $fields = ['id', 'name', 'email']): FacebookResponse
+    public function getAppId(): string
     {
-        $params = ['fields' => implode(',', $fields)];
-        return $this->get('/me', $params, $accessToken);
+        return $this->appId;
     }
 
     /**
-     * Get user posts
+     * Get the app secret
      */
-    public function getUserPosts(?string $accessToken = null, array $params = []): FacebookResponse
+    public function getAppSecret(): string
     {
-        $defaultParams = ['limit' => 25];
-        $params = array_merge($defaultParams, $params);
-        
-        return $this->get('/me/posts', $params, $accessToken);
-    }
-
-    /**
-     * Get page information
-     */
-    public function getPage(string $pageId, ?string $accessToken = null, array $fields = ['id', 'name', 'fan_count']): FacebookResponse
-    {
-        $params = ['fields' => implode(',', $fields)];
-        return $this->get("/{$pageId}", $params, $accessToken);
-    }
-
-    /**
-     * Get page posts
-     */
-    public function getPagePosts(string $pageId, ?string $accessToken = null, array $params = []): FacebookResponse
-    {
-        $defaultParams = ['limit' => 25];
-        $params = array_merge($defaultParams, $params);
-        
-        return $this->get("/{$pageId}/posts", $params, $accessToken);
-    }
-
-    /**
-     * Create a post on a page
-     */
-    public function createPagePost(string $pageId, array $data, ?string $accessToken = null): FacebookResponse
-    {
-        return $this->post("/{$pageId}/feed", $data, $accessToken);
-    }
-
-    /**
-     * Get page insights
-     */
-    public function getPageInsights(string $pageId, array $metrics, ?string $accessToken = null, array $params = []): FacebookResponse
-    {
-        $defaultParams = [
-            'metric' => implode(',', $metrics),
-            'period' => 'day',
-            'limit' => 30,
-        ];
-        $params = array_merge($defaultParams, $params);
-        
-        return $this->get("/{$pageId}/insights", $params, $accessToken);
-    }
-
-    /**
-     * Get user accounts (pages)
-     */
-    public function getUserAccounts(?string $accessToken = null): FacebookResponse
-    {
-        return $this->get('/me/accounts', [], $accessToken);
-    }
-
-    /**
-     * Get long-lived access token
-     */
-    public function getLongLivedToken(string $shortLivedToken): FacebookResponse
-    {
-        $params = [
-            'grant_type' => 'fb_exchange_token',
-            'client_id' => $this->appId,
-            'client_secret' => $this->appSecret,
-            'fb_exchange_token' => $shortLivedToken,
-        ];
-
-        return $this->get('/oauth/access_token', $params);
-    }
-
-    /**
-     * Get debug token information
-     */
-    public function debugToken(string $accessToken): FacebookResponse
-    {
-        $params = [
-            'input_token' => $accessToken,
-            'access_token' => $this->appId . '|' . $this->appSecret,
-        ];
-
-        return $this->get('/debug_token', $params);
+        return $this->appSecret;
     }
 
     /**
@@ -306,7 +208,7 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
 
         $options = [];
         
-        if (!empty($data)) {
+        if (!empty($data) && $method !== 'GET') {
             $options['form_params'] = $data;
         }
         
