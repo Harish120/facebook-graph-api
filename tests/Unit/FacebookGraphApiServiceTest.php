@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelFacebookGraphApi\Tests\Unit;
+namespace Harryes\FacebookGraphApi\Tests\Unit;
 
-use LaravelFacebookGraphApi\Tests\TestCase;
-use LaravelFacebookGraphApi\Services\FacebookGraphApiService;
-use LaravelFacebookGraphApi\Responses\FacebookResponse;
-use LaravelFacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Tests\TestCase;
+use Harryes\FacebookGraphApi\Services\FacebookGraphApiService;
+use Harryes\FacebookGraphApi\Responses\FacebookResponse;
+use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;

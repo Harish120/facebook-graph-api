@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelFacebookGraphApi;
+namespace Harryes\FacebookGraphApi;
 
 use Illuminate\Support\ServiceProvider;
-use LaravelFacebookGraphApi\Services\FacebookGraphApiService;
-use LaravelFacebookGraphApi\Contracts\FacebookGraphApiInterface;
+use Harryes\FacebookGraphApi\Services\FacebookGraphApiService;
+use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
 
 class FacebookGraphApiServiceProvider extends ServiceProvider
 {

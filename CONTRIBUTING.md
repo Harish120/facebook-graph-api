@@ -1,6 +1,6 @@
-# Contributing to Laravel Facebook Graph API Package
+# Contributing to Harryes Facebook Graph API Package
 
-Thank you for your interest in contributing to the Laravel Facebook Graph API Package! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to the Harryes Facebook Graph API Package! This document provides guidelines and information for contributors.
 
 ## 🤝 How to Contribute
 
@@ -260,4 +260,4 @@ By contributing to this project, you agree that your contributions will be licen
 
 ---
 
-Thank you for contributing to the Laravel Facebook Graph API Package! 🚀 
+Thank you for contributing to the Harryes Facebook Graph API Package! 🚀 

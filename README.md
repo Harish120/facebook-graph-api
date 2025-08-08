@@ -1,8 +1,8 @@
-# Laravel Facebook Graph API Package
+# Harryes Facebook Graph API Package
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/laravel-facebook-graph-api/facebook-graph-api.svg?style=flat-square)](https://packagist.org/packages/laravel-facebook-graph-api/facebook-graph-api)
-[![Tests](https://img.shields.io/github/actions/workflow/status/laravel-facebook-graph-api/facebook-graph-api/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/laravel-facebook-graph-api/facebook-graph-api/actions/workflows/run-tests.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/laravel-facebook-graph-api/facebook-graph-api.svg?style=flat-square)](https://packagist.org/packages/laravel-facebook-graph-api/facebook-graph-api)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/harryes/facebook-graph-api.svg?style=flat-square)](https://packagist.org/packages/harryes/facebook-graph-api)
+[![Tests](https://img.shields.io/github/actions/workflow/status/harryes/facebook-graph-api/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/harryes/facebook-graph-api/actions/workflows/run-tests.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/harryes/facebook-graph-api.svg?style=flat-square)](https://packagist.org/packages/harryes/facebook-graph-api)
 
 A comprehensive Laravel package for Facebook Graph API with modern design patterns, excellent error handling, and developer-friendly features. This package replaces the archived Facebook PHP SDK with a modern, Laravel-native solution.
 
@@ -25,7 +25,7 @@ A comprehensive Laravel package for Facebook Graph API with modern design patter
 You can install the package via composer:
 
 ```bash
-composer require laravel-facebook-graph-api/facebook-graph-api
+composer require harryes/facebook-graph-api
 ```
 
 ### Configuration
@@ -63,7 +63,7 @@ FACEBOOK_CACHE_TTL=3600
 #### Using the Facade
 
 ```php
-use LaravelFacebookGraphApi\Facades\FacebookGraph;
+use Harryes\FacebookGraphApi\Facades\FacebookGraph;
 
 // Get user profile
 $userProfile = FacebookGraph::getUserProfile($accessToken);
@@ -83,7 +83,7 @@ $post = FacebookGraph::createPagePost('page_id', [
 #### Using Dependency Injection
 
 ```php
-use LaravelFacebookGraphApi\Contracts\FacebookGraphApiInterface;
+use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
 
 class FacebookController extends Controller
 {
@@ -182,7 +182,7 @@ $pages = FacebookGraph::getUserAccounts($accessToken);
 The package includes helper classes for common operations:
 
 ```php
-use LaravelFacebookGraphApi\Helpers\FacebookGraphHelper;
+use Harryes\FacebookGraphApi\Helpers\FacebookGraphHelper;
 
 $helper = new FacebookGraphHelper($facebookApi);
 
@@ -251,7 +251,7 @@ return [
 The package provides comprehensive error handling with specific exception types:
 
 ```php
-use LaravelFacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
 
 try {
     $response = FacebookGraph::getUserProfile($accessToken);
@@ -285,7 +285,7 @@ composer test
 ### Testing in Your Application
 
 ```php
-use LaravelFacebookGraphApi\Tests\TestCase;
+use Harryes\FacebookGraphApi\Tests\TestCase;
 
 class FacebookTest extends TestCase
 {
@@ -378,9 +378,9 @@ $user = $response->getData();
 
 ## 📞 Support
 
-- **Documentation**: [https://github.com/laravel-facebook-graph-api/facebook-graph-api](https://github.com/laravel-facebook-graph-api/facebook-graph-api)
-- **Issues**: [https://github.com/laravel-facebook-graph-api/facebook-graph-api/issues](https://github.com/laravel-facebook-graph-api/facebook-graph-api/issues)
-- **Discussions**: [https://github.com/laravel-facebook-graph-api/facebook-graph-api/discussions](https://github.com/laravel-facebook-graph-api/facebook-graph-api/discussions)
+- **Documentation**: [https://github.com/harryes/facebook-graph-api](https://github.com/harryes/facebook-graph-api)
+- **Issues**: [https://github.com/harryes/facebook-graph-api/issues](https://github.com/harryes/facebook-graph-api/issues)
+- **Discussions**: [https://github.com/harryes/facebook-graph-api/discussions](https://github.com/harryes/facebook-graph-api/discussions)
 
 ---
 

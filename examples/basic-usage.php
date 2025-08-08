@@ -6,9 +6,9 @@
  * This file demonstrates the basic usage of the package in a Laravel application.
  */
 
-use LaravelFacebookGraphApi\Facades\FacebookGraph;
-use LaravelFacebookGraphApi\Contracts\FacebookGraphApiInterface;
-use LaravelFacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Facades\FacebookGraph;
+use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
+use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
 
 // Example 1: Using the Facade
 class FacebookController extends Controller

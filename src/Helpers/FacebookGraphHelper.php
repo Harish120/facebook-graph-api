@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelFacebookGraphApi\Helpers;
+namespace Harryes\FacebookGraphApi\Helpers;
 
-use LaravelFacebookGraphApi\Contracts\FacebookGraphApiInterface;
-use LaravelFacebookGraphApi\Responses\FacebookResponse;
+use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
+use Harryes\FacebookGraphApi\Responses\FacebookResponse;
 
 class FacebookGraphHelper
 {

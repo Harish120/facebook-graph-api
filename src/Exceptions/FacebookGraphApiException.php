@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelFacebookGraphApi\Exceptions;
+namespace Harryes\FacebookGraphApi\Exceptions;
 
 use Exception;
 

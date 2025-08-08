@@ -1,15 +1,15 @@
 <?php
 
-namespace LaravelFacebookGraphApi\Services;
+namespace Harryes\FacebookGraphApi\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use LaravelFacebookGraphApi\Contracts\FacebookGraphApiInterface;
-use LaravelFacebookGraphApi\Exceptions\FacebookGraphApiException;
-use LaravelFacebookGraphApi\Responses\FacebookResponse;
+use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
+use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Responses\FacebookResponse;
 
 class FacebookGraphApiService implements FacebookGraphApiInterface
 {

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Laravel Facebook Graph API Package will be documented in this file.
+All notable changes to the Harryes Facebook Graph API Package will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2024-01-XX
 
 ### Added
-- Initial release of Laravel Facebook Graph API Package
+- Initial release of Harryes Facebook Graph API Package
 - Complete replacement for archived Facebook PHP SDK
 - Modern Laravel-native implementation
 - Comprehensive documentation and examples
@@ -101,8 +101,8 @@ $user = $response->getData();
 ## Support
 
 For support and questions:
-- **GitHub Issues**: [https://github.com/laravel-facebook-graph-api/facebook-graph-api/issues](https://github.com/laravel-facebook-graph-api/facebook-graph-api/issues)
-- **Documentation**: [https://github.com/laravel-facebook-graph-api/facebook-graph-api](https://github.com/laravel-facebook-graph-api/facebook-graph-api)
+- **GitHub Issues**: [https://github.com/harryes/facebook-graph-api/issues](https://github.com/harryes/facebook-graph-api/issues)
+- **Documentation**: [https://github.com/harryes/facebook-graph-api](https://github.com/harryes/facebook-graph-api)
 
 ---
 

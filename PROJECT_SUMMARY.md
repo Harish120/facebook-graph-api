@@ -1,4 +1,4 @@
-# 🎉 Laravel Facebook Graph API Package - Project Summary
+# 🎉 Harryes Facebook Graph API Package - Project Summary
 
 ## 📊 Project Overview
 

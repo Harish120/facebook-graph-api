@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelFacebookGraphApi\Contracts;
+namespace Harryes\FacebookGraphApi\Contracts;
 
-use LaravelFacebookGraphApi\Responses\FacebookResponse;
-use LaravelFacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Responses\FacebookResponse;
+use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
 
 interface FacebookGraphApiInterface
 {

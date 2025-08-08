@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelFacebookGraphApi\Responses;
+namespace Harryes\FacebookGraphApi\Responses;
 
 use Illuminate\Support\Collection;
-use LaravelFacebookGraphApi\Exceptions\FacebookGraphApiException;
+use Harryes\FacebookGraphApi\Exceptions\FacebookGraphApiException;
 
 class FacebookResponse
 {

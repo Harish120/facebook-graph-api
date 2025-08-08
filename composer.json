@@ -1,5 +1,5 @@
 {
-    "name": "laravel-facebook-graph-api/facebook-graph-api",
+    "name": "harryes/facebook-graph-api",
     "description": "A comprehensive Laravel package for Facebook Graph API with modern design patterns and excellent developer experience",
     "type": "library",
     "license": "MIT",
@@ -12,8 +12,8 @@
     ],
     "authors": [
         {
-            "name": "Facebook Graph API Package",
-            "email": "support@laravel-facebook-graph-api.com"
+            "name": "Harryes",
+            "email": "pantharish120@gmail.com"
         }
     ],
     "require": {
@@ -33,21 +33,21 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelFacebookGraphApi\\": "src/"
+            "Harryes\\FacebookGraphApi\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaravelFacebookGraphApi\\Tests\\": "tests/"
+            "Harryes\\FacebookGraphApi\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelFacebookGraphApi\\FacebookGraphApiServiceProvider"
+                "Harryes\\FacebookGraphApi\\FacebookGraphApiServiceProvider"
             ],
             "aliases": {
-                "FacebookGraph": "LaravelFacebookGraphApi\\Facades\\FacebookGraph"
+                "FacebookGraph": "Harryes\\FacebookGraphApi\\Facades\\FacebookGraph"
             }
         }
     },

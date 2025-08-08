@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelFacebookGraphApi\Tests;
+namespace Harryes\FacebookGraphApi\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
-use LaravelFacebookGraphApi\FacebookGraphApiServiceProvider;
+use Harryes\FacebookGraphApi\FacebookGraphApiServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
@@ -17,7 +17,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageAliases($app): array
     {
         return [
-            'FacebookGraph' => \LaravelFacebookGraphApi\Facades\FacebookGraph::class,
+            'FacebookGraph' => \Harryes\FacebookGraphApi\Facades\FacebookGraph::class,
         ];
     }
 
