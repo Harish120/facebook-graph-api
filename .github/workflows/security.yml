@@ -29,13 +29,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Run security checks
-        run: composer security || exit 0
+        run: composer security
 
       - name: Run detailed security audit
-        run: composer audit --format=json --working-dir=. | tee audit.json || true
-
-      - name: Upload security scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: audit.json 
+        run: composer audit --format=json --working-dir=. | tee audit.json || true 
