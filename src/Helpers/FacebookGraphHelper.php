@@ -18,7 +18,9 @@ class FacebookGraphHelper
      */
     public function getUserBasicInfo(?string $accessToken = null): array
     {
-        $response = $this->facebookApi->getUserProfile($accessToken, ['id', 'name', 'email', 'picture']);
+        $response = $this->facebookApi->get('/me', [
+            'fields' => 'id,name,email,picture',
+        ], $accessToken);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to get user profile: '.$response->getErrorMessage());
@@ -32,7 +34,10 @@ class FacebookGraphHelper
      */
     public function getUserRecentPosts(int $limit = 10, ?string $accessToken = null): array
     {
-        $response = $this->facebookApi->getUserPosts($accessToken, ['limit' => $limit]);
+        $response = $this->facebookApi->get('/me/posts', [
+            'limit' => $limit,
+            'fields' => 'id,message,created_time,permalink_url',
+        ], $accessToken);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to get user posts: '.$response->getErrorMessage());
@@ -46,9 +51,9 @@ class FacebookGraphHelper
      */
     public function getPageBasicInfo(string $pageId, ?string $accessToken = null): array
     {
-        $response = $this->facebookApi->getPage($pageId, $accessToken, [
-            'id', 'name', 'fan_count', 'category', 'picture', 'description',
-        ]);
+        $response = $this->facebookApi->get("/{$pageId}", [
+            'fields' => 'id,name,fan_count,category,picture,description',
+        ], $accessToken);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to get page info: '.$response->getErrorMessage());
@@ -62,7 +67,10 @@ class FacebookGraphHelper
      */
     public function createSimplePagePost(string $pageId, string $message, ?string $accessToken = null): array
     {
-        $response = $this->facebookApi->createPagePost($pageId, ['message' => $message], $accessToken);
+        $response = $this->facebookApi->post("/{$pageId}/feed", [
+            'message' => $message,
+            'published' => true,
+        ], $accessToken);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to create page post: '.$response->getErrorMessage());
@@ -84,10 +92,11 @@ class FacebookGraphHelper
             'page_fan_removes',
         ];
 
-        $response = $this->facebookApi->getPageInsights($pageId, $metrics, $accessToken, [
+        $response = $this->facebookApi->get("/{$pageId}/insights", [
+            'metric' => implode(',', $metrics),
             'period' => 'day',
             'limit' => 30,
-        ]);
+        ], $accessToken);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to get page insights: '.$response->getErrorMessage());
@@ -101,7 +110,9 @@ class FacebookGraphHelper
      */
     public function getUserPages(?string $accessToken = null): array
     {
-        $response = $this->facebookApi->getUserAccounts($accessToken);
+        $response = $this->facebookApi->get('/me/accounts', [
+            'fields' => 'id,name,category,access_token',
+        ], $accessToken);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to get user accounts: '.$response->getErrorMessage());
@@ -115,7 +126,10 @@ class FacebookGraphHelper
      */
     public function validateToken(string $accessToken): array
     {
-        $response = $this->facebookApi->debugToken($accessToken);
+        $response = $this->facebookApi->get('/debug_token', [
+            'input_token' => $accessToken,
+            'access_token' => $this->facebookApi->getAppId().'|'.$this->facebookApi->getAppSecret(),
+        ]);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to validate token: '.$response->getErrorMessage());
@@ -129,7 +143,12 @@ class FacebookGraphHelper
      */
     public function exchangeToken(string $shortLivedToken): array
     {
-        $response = $this->facebookApi->getLongLivedToken($shortLivedToken);
+        $response = $this->facebookApi->get('/oauth/access_token', [
+            'grant_type' => 'fb_exchange_token',
+            'client_id' => $this->facebookApi->getAppId(),
+            'client_secret' => $this->facebookApi->getAppSecret(),
+            'fb_exchange_token' => $shortLivedToken,
+        ]);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to exchange token: '.$response->getErrorMessage());
@@ -158,10 +177,10 @@ class FacebookGraphHelper
      */
     public function getPagePostsWithEngagement(string $pageId, int $limit = 25, ?string $accessToken = null): array
     {
-        $response = $this->facebookApi->getPagePosts($pageId, $accessToken, [
+        $response = $this->facebookApi->get("/{$pageId}/posts", [
             'limit' => $limit,
             'fields' => 'id,message,created_time,type,permalink_url,shares,comments.limit(0).summary(true),likes.limit(0).summary(true)',
-        ]);
+        ], $accessToken);
 
         if (! $response->isSuccessful()) {
             throw new \Exception('Failed to get page posts: '.$response->getErrorMessage());
@@ -193,13 +212,13 @@ class FacebookGraphHelper
     public function getTokenExpirationInfo(string $accessToken): array
     {
         $tokenInfo = $this->validateToken($accessToken);
-        $data = $tokenInfo['data'];
+        $data = $tokenInfo['data'] ?? [];
 
         return [
-            'expires_at' => $data['expires_at'] ?? null,
-            'is_expired' => $data['is_expired'] ?? false,
             'is_valid' => $data['is_valid'] ?? false,
+            'expires_at' => $data['expires_at'] ?? null,
             'scopes' => $data['scopes'] ?? [],
+            'type' => $data['type'] ?? 'unknown',
         ];
     }
 }

@@ -204,7 +204,7 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     /**
      * Create a batch request builder for chaining multiple requests
      */
-    public function createBatchRequest(): FacebookBatchRequestBuilder
+    public function createBatchRequest(): \Harryes\FacebookGraphApi\Services\FacebookBatchRequestBuilder
     {
         return new FacebookBatchRequestBuilder($this);
     }
@@ -322,8 +322,12 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
 
         } catch (ClientException $e) {
             $this->handleClientException($e);
+            // This will never be reached as handleClientException throws an exception
+            throw new FacebookGraphApiException('Client exception occurred', 0, $e);
         } catch (ServerException $e) {
             $this->handleServerException($e);
+            // This will never be reached as handleServerException throws an exception
+            throw new FacebookGraphApiException('Server exception occurred', 0, $e);
         } catch (\Exception $e) {
             throw new FacebookGraphApiException(
                 "Request failed: {$e->getMessage()}",

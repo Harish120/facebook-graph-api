@@ -1,0 +1,15 @@
+parameters:
+    level: 8
+    paths:
+        - src/
+        - tests/
+    excludePaths:
+        - tests/TestCase.php
+    ignoreErrors:
+        - identifier: missingType.iterableValue
+        - identifier: missingType.generics
+    bootstrapFiles:
+        - vendor/autoload.php
+    tmpDir: build/phpstan
+    parallel:
+        maximumNumberOfProcesses: 2 

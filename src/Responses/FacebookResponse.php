@@ -131,11 +131,21 @@ class FacebookResponse
     }
 
     /**
-     * Get a specific value from the response data
+     * Get a value from the response data using dot notation
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
-        return data_get($this->data, $key, $default);
+        $keys = explode('.', $key);
+        $value = $this->data;
+
+        foreach ($keys as $k) {
+            if (! is_array($value) || ! array_key_exists($k, $value)) {
+                return $default;
+            }
+            $value = $value[$k];
+        }
+
+        return $value;
     }
 
     /**
@@ -147,11 +157,13 @@ class FacebookResponse
     }
 
     /**
-     * Get the response as JSON
+     * Convert the response to JSON
      */
     public function toJson(): string
     {
-        return json_encode($this->data);
+        $json = json_encode($this->data);
+
+        return $json !== false ? $json : '{}';
     }
 
     /**
@@ -168,7 +180,8 @@ class FacebookResponse
     public function throwIfError(): self
     {
         if ($this->hasError()) {
-            throw FacebookGraphApiException::invalidRequest($this->getErrorMessage());
+            $errorMessage = $this->getErrorMessage() ?? 'Unknown error occurred';
+            throw FacebookGraphApiException::invalidRequest($errorMessage);
         }
 
         return $this;
@@ -199,9 +212,9 @@ class FacebookResponse
     }
 
     /**
-     * Magic method to access data properties directly
+     * Magic getter for accessing response data as properties
      */
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         return $this->get($name);
     }
@@ -220,5 +233,26 @@ class FacebookResponse
     public function __toString(): string
     {
         return $this->toJson();
+    }
+
+    /**
+     * Get the error details
+     */
+    public function getErrorDetails(): ?string
+    {
+        if (! $this->hasError()) {
+            return null;
+        }
+
+        $error = $this->get('error');
+        if (! is_array($error)) {
+            return 'Unknown error occurred';
+        }
+
+        $message = $error['message'] ?? 'Unknown error occurred';
+        $type = $error['type'] ?? 'Unknown';
+        $code = $error['code'] ?? 'Unknown';
+
+        return "Error {$code} ({$type}): {$message}";
     }
 }

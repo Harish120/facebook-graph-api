@@ -44,7 +44,7 @@ interface FacebookGraphApiInterface
     /**
      * Create a batch request builder for chaining multiple requests
      */
-    public function createBatchRequest(): FacebookBatchRequestBuilder;
+    public function createBatchRequest(): \Harryes\FacebookGraphApi\Services\FacebookBatchRequestBuilder;
 
     /**
      * Set the access token for subsequent requests
