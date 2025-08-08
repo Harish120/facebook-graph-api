@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Harryes\FacebookGraphApi\Responses\FacebookResponse put(string $endpoint, array $data = [], ?string $accessToken = null)
  * @method static \Harryes\FacebookGraphApi\Responses\FacebookResponse delete(string $endpoint, ?string $accessToken = null)
  * @method static \Harryes\FacebookGraphApi\Responses\FacebookResponse upload(string $endpoint, string $filePath, array $data = [], ?string $accessToken = null)
+ * @method static \Harryes\FacebookGraphApi\Responses\FacebookResponse sendBatchRequest(array $requests, ?string $accessToken = null)
+ * @method static \Harryes\FacebookGraphApi\Services\FacebookBatchRequestBuilder createBatchRequest()
  * @method static self setAccessToken(string $accessToken)
  * @method static ?string getAccessToken()
  * @method static self setGraphVersion(string $version)

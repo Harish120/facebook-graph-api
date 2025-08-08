@@ -37,6 +37,16 @@ interface FacebookGraphApiInterface
     public function upload(string $endpoint, string $filePath, array $data = [], ?string $accessToken = null): FacebookResponse;
 
     /**
+     * Send batch requests to Facebook Graph API
+     */
+    public function sendBatchRequest(array $requests, ?string $accessToken = null): FacebookResponse;
+
+    /**
+     * Create a batch request builder for chaining multiple requests
+     */
+    public function createBatchRequest(): FacebookBatchRequestBuilder;
+
+    /**
      * Set the access token for subsequent requests
      */
     public function setAccessToken(string $accessToken): self;

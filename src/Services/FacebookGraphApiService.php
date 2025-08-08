@@ -134,6 +134,85 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     }
 
     /**
+     * Send batch requests to Facebook Graph API
+     * 
+     * @param array $requests Array of request arrays with keys: method, endpoint, params, name
+     * @param string|null $accessToken Access token for the batch request
+     * @return FacebookResponse
+     */
+    public function sendBatchRequest(array $requests, ?string $accessToken = null): FacebookResponse
+    {
+        $token = $accessToken ?? $this->accessToken;
+
+        if (! $token) {
+            throw FacebookGraphApiException::invalidAccessToken('No access token provided');
+        }
+
+        if (empty($requests)) {
+            throw FacebookGraphApiException::invalidRequest('No requests provided for batch');
+        }
+
+        $batchData = [];
+        $batchData['access_token'] = $token;
+        $batchData['batch'] = json_encode($this->prepareBatchRequests($requests));
+
+        $url = $this->buildUrl('', $batchData);
+
+        return $this->makeRequest('POST', $url, $batchData);
+    }
+
+    /**
+     * Prepare batch requests for the Facebook Graph API
+     * 
+     * @param array $requests Array of request arrays
+     * @return array Prepared batch requests
+     */
+    protected function prepareBatchRequests(array $requests): array
+    {
+        $batchRequests = [];
+        $nameCounter = 0;
+
+        foreach ($requests as $request) {
+            $method = $request['method'] ?? 'GET';
+            $endpoint = $request['endpoint'] ?? '';
+            $params = $request['params'] ?? [];
+            $name = $request['name'] ?? 'request_' . $nameCounter++;
+
+            // Build the relative URL
+            $relativeUrl = $this->graphVersion . $endpoint;
+            
+            if ($method === 'GET' && !empty($params)) {
+                $relativeUrl .= '?' . http_build_query($params);
+            }
+
+            $batchRequest = [
+                'method' => $method,
+                'relative_url' => $relativeUrl,
+                'name' => $name,
+            ];
+
+            // Add body for non-GET requests
+            if ($method !== 'GET' && !empty($params)) {
+                $batchRequest['body'] = http_build_query($params);
+            }
+
+            $batchRequests[] = $batchRequest;
+        }
+
+        return $batchRequests;
+    }
+
+    /**
+     * Create a batch request builder for chaining multiple requests
+     * 
+     * @return FacebookBatchRequestBuilder
+     */
+    public function createBatchRequest(): FacebookBatchRequestBuilder
+    {
+        return new FacebookBatchRequestBuilder($this);
+    }
+
+    /**
      * Set the access token for subsequent requests
      */
     public function setAccessToken(string $accessToken): self
