@@ -44,6 +44,22 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     }
 
     /**
+     * Get the app ID
+     */
+    public function getAppId(): string
+    {
+        return $this->appId;
+    }
+
+    /**
+     * Get the app secret
+     */
+    public function getAppSecret(): string
+    {
+        return $this->appSecret;
+    }
+
+    /**
      * Make a GET request to Facebook Graph API
      */
     public function get(string $endpoint, array $params = [], ?string $accessToken = null): FacebookResponse

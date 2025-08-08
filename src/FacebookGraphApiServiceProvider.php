@@ -28,6 +28,11 @@ class FacebookGraphApiServiceProvider extends ServiceProvider
         });
 
         $this->app->alias(FacebookGraphApiInterface::class, 'facebook-graph-api');
+        
+        // Register the facade
+        $this->app->singleton('facebook-graph-api', function ($app) {
+            return $app->make(FacebookGraphApiInterface::class);
+        });
     }
 
     /**
