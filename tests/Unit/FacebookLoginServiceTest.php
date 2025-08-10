@@ -225,6 +225,85 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertEmpty($userProfile);
     }
 
+    public function test_get_default_scopes_returns_config_value(): void
+    {
+        $scopes = $this->loginService->getDefaultScopes();
+
+        $this->assertIsString($scopes);
+        $this->assertEquals('email,public_profile', $scopes);
+    }
+
+    public function test_get_default_button_options_returns_config_value(): void
+    {
+        $options = $this->loginService->getDefaultButtonOptions();
+
+        $this->assertIsArray($options);
+        $this->assertArrayHasKey('data-width', $options);
+        $this->assertArrayHasKey('data-size', $options);
+        $this->assertEquals('300', $options['data-width']);
+        $this->assertEquals('large', $options['data-size']);
+    }
+
+    public function test_get_default_user_fields_returns_config_value(): void
+    {
+        $fields = $this->loginService->getDefaultUserFields();
+
+        $this->assertIsArray($fields);
+        $this->assertContains('id', $fields);
+        $this->assertContains('name', $fields);
+        $this->assertContains('email', $fields);
+        $this->assertContains('picture', $fields);
+    }
+
+    public function test_render_login_button_uses_config_defaults(): void
+    {
+        $buttonHtml = $this->loginService->renderLoginButton();
+
+        $this->assertStringContainsString('data-width="300"', $buttonHtml);
+        $this->assertStringContainsString('data-size="large"', $buttonHtml);
+        $this->assertStringContainsString('data-button-type="login_with"', $buttonHtml);
+    }
+
+    public function test_render_login_button_merges_custom_options_with_config(): void
+    {
+        $customOptions = [
+            'scope' => 'email,public_profile,user_birthday',
+            'data-width' => '400',
+        ];
+
+        $buttonHtml = $this->loginService->renderLoginButton($customOptions);
+
+        // Custom options should override config defaults
+        $this->assertStringContainsString('data-width="400"', $buttonHtml);
+        $this->assertStringContainsString('data-scope="email,public_profile,user_birthday"', $buttonHtml);
+
+        // Config defaults should still be present for non-overridden options
+        $this->assertStringContainsString('data-size="large"', $buttonHtml);
+    }
+
+    public function test_get_user_profile_uses_config_user_fields(): void
+    {
+        // Create a real FacebookResponse with user data
+        $responseData = [
+            'id' => '123',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'picture' => 'https://example.com/picture.jpg',
+        ];
+        $mockResponse = new FacebookResponse($responseData);
+
+        /** @phpstan-ignore-next-line */
+        $this->mockFacebookApi->shouldReceive('get')
+            ->once()
+            ->with('/me', ['fields' => 'id,name,email,picture,gender,birthday,locale,timezone,updated_time,verified'], 'test_token')
+            ->andReturn($mockResponse);
+
+        $result = $this->loginService->getUserProfile('test_token');
+
+        $this->assertIsArray($result);
+        $this->assertEquals($responseData, $result);
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();

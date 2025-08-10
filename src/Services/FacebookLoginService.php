@@ -31,16 +31,14 @@ class FacebookLoginService
     public function renderLoginButton(array $options = []): string
     {
         $defaultOptions = [
-            'scope' => 'email,public_profile',
+            'scope' => Config::get('facebook-graph-api.login.default_scopes', 'email,public_profile'),
             'onlogin' => 'checkLoginState',
-            'data-width' => '300',
-            'data-size' => 'large',
-            'data-button-type' => 'login_with',
-            'data-layout' => 'rounded',
-            'data-auto-logout-link' => 'false',
-            'data-use-continue-as' => 'false',
         ];
 
+        // Merge with config button options
+        $defaultOptions = array_merge($defaultOptions, Config::get('facebook-graph-api.login.button_options', []));
+
+        // Merge with user-provided options (user options take precedence)
         $options = array_merge($defaultOptions, $options);
 
         $attributes = '';
@@ -61,15 +59,12 @@ class FacebookLoginService
     public function getVueLoginButtonProps(array $options = []): array
     {
         $defaultOptions = [
-            'scope' => 'email,public_profile',
+            'scope' => Config::get('facebook-graph-api.login.default_scopes', 'email,public_profile'),
             'onlogin' => 'checkLoginState',
-            'data-width' => '300',
-            'data-size' => 'large',
-            'data-button-type' => 'login_with',
-            'data-layout' => 'rounded',
-            'data-auto-logout-link' => 'false',
-            'data-use-continue-as' => 'false',
         ];
+
+        // Merge with config button options
+        $defaultOptions = array_merge($defaultOptions, Config::get('facebook-graph-api.login.button_options', []));
 
         return array_merge($defaultOptions, $options);
     }
@@ -80,15 +75,12 @@ class FacebookLoginService
     public function getReactLoginButtonProps(array $options = []): array
     {
         $defaultOptions = [
-            'scope' => 'email,public_profile',
-            'onLogin' => 'checkLoginState',
-            'data-width' => '300',
-            'data-size' => 'large',
-            'data-button-type' => 'login_with',
-            'data-layout' => 'rounded',
-            'data-auto-logout-link' => 'false',
-            'data-use-continue-as' => 'false',
+            'scope' => Config::get('facebook-graph-api.login.default_scopes', 'email,public_profile'),
+            'onLogin' => 'checkLoginState', // React uses camelCase
         ];
+
+        // Merge with config button options
+        $defaultOptions = array_merge($defaultOptions, Config::get('facebook-graph-api.login.button_options', []));
 
         return array_merge($defaultOptions, $options);
     }
@@ -242,7 +234,7 @@ class FacebookLoginService
     {
         try {
             $response = $this->facebookApi->get('/me', [
-                'fields' => 'id,name,email,picture,gender,birthday,locale,timezone,updated_time,verified',
+                'fields' => implode(',', Config::get('facebook-graph-api.login.user_fields', ['id', 'name', 'email', 'picture'])),
             ], $accessToken);
 
             if ($response->isSuccessful()) {
@@ -253,5 +245,29 @@ class FacebookLoginService
         } catch (\Exception $e) {
             return [];
         }
+    }
+
+    /**
+     * Get default scopes for Facebook Login
+     */
+    public function getDefaultScopes(): string
+    {
+        return Config::get('facebook-graph-api.login.default_scopes', 'email,public_profile');
+    }
+
+    /**
+     * Get default button options for Facebook Login
+     */
+    public function getDefaultButtonOptions(): array
+    {
+        return Config::get('facebook-graph-api.login.button_options', []);
+    }
+
+    /**
+     * Get default user fields for profile requests
+     */
+    public function getDefaultUserFields(): array
+    {
+        return Config::get('facebook-graph-api.login.user_fields', ['id', 'name', 'email', 'picture']);
     }
 }

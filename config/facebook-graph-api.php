@@ -113,4 +113,29 @@ return [
         'page' => ['id', 'name', 'fan_count', 'category', 'picture'],
         'post' => ['id', 'message', 'created_time', 'type', 'permalink_url'],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Facebook Login Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for Facebook Login functionality including default scopes,
+    | button options, and other login-related settings.
+    |
+    */
+    'login' => [
+        'default_scopes' => env('FACEBOOK_LOGIN_SCOPES', 'email,public_profile'),
+        'button_options' => [
+            'data-width' => '300',
+            'data-size' => 'large',
+            'data-button-type' => 'login_with',
+            'data-layout' => 'rounded',
+            'data-auto-logout-link' => 'false',
+            'data-use-continue-as' => 'false',
+        ],
+        'user_fields' => [
+            'id', 'name', 'email', 'picture', 'gender', 'birthday',
+            'locale', 'timezone', 'updated_time', 'verified',
+        ],
+    ],
 ];
