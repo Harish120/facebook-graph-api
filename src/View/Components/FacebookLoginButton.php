@@ -13,7 +13,7 @@ class FacebookLoginButton extends Component
         public bool $includeHelpers = true
     ) {}
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
     {
         $loginService = app(FacebookLoginService::class);
 

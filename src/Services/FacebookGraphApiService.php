@@ -262,6 +262,19 @@ class FacebookGraphApiService implements FacebookGraphApiInterface
     }
 
     /**
+     * Debug an access token to get information about it
+     */
+    public function debugToken(string $accessToken): FacebookResponse
+    {
+        $params = [
+            'input_token' => $accessToken,
+            'access_token' => $this->appId.'|'.$this->appSecret,
+        ];
+
+        return $this->get('/debug_token', $params);
+    }
+
+    /**
      * Build the complete URL for the request
      */
     protected function buildUrl(string $endpoint, array $params = []): string

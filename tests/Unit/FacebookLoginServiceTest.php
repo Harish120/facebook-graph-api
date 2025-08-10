@@ -2,6 +2,8 @@
 
 namespace Harryes\FacebookGraphApi\Tests\Unit;
 
+use Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface;
+use Harryes\FacebookGraphApi\Responses\FacebookResponse;
 use Harryes\FacebookGraphApi\Services\FacebookLoginService;
 use Harryes\FacebookGraphApi\Tests\TestCase;
 use Mockery;
@@ -10,17 +12,18 @@ class FacebookLoginServiceTest extends TestCase
 {
     private FacebookLoginService $loginService;
 
-    private $mockFacebookApi;
+    private \Mockery\MockInterface $mockFacebookApi;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->mockFacebookApi = Mockery::mock('Harryes\FacebookGraphApi\Contracts\FacebookGraphApiInterface');
+        $this->mockFacebookApi = Mockery::mock(FacebookGraphApiInterface::class);
+        /** @phpstan-ignore-next-line */
         $this->loginService = new FacebookLoginService($this->mockFacebookApi);
     }
 
-    public function test_get_login_config_returns_correct_configuration()
+    public function test_get_login_config_returns_correct_configuration(): void
     {
         $config = $this->loginService->getLoginConfig();
 
@@ -35,7 +38,7 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertTrue($config['status']);
     }
 
-    public function test_render_login_button_returns_html_string()
+    public function test_render_login_button_returns_html_string(): void
     {
         $buttonHtml = $this->loginService->renderLoginButton();
 
@@ -44,7 +47,7 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertStringContainsString('data-scope="email,public_profile"', $buttonHtml);
     }
 
-    public function test_render_login_button_with_custom_options()
+    public function test_render_login_button_with_custom_options(): void
     {
         $customOptions = [
             'scope' => 'email,public_profile,pages_manage_posts',
@@ -59,7 +62,7 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertStringContainsString('data-size="medium"', $buttonHtml);
     }
 
-    public function test_render_sdk_script_returns_script_string()
+    public function test_render_sdk_script_returns_script_string(): void
     {
         $scriptHtml = $this->loginService->renderSdkScript();
 
@@ -69,7 +72,7 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertStringContainsString('FB.init', $scriptHtml);
     }
 
-    public function test_render_helper_scripts_returns_script_string()
+    public function test_render_helper_scripts_returns_script_string(): void
     {
         $scriptHtml = $this->loginService->renderHelperScripts();
 
@@ -80,7 +83,7 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertStringContainsString('function testAPI', $scriptHtml);
     }
 
-    public function test_render_complete_blade_implementation_includes_all_parts()
+    public function test_render_complete_blade_implementation_includes_all_parts(): void
     {
         $completeImplementation = $this->loginService->renderCompleteBladeImplementation();
 
@@ -89,7 +92,7 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertStringContainsString('function checkLoginState', $completeImplementation);
     }
 
-    public function test_get_vue_login_button_props_returns_array()
+    public function test_get_vue_login_button_props_returns_array(): void
     {
         $props = $this->loginService->getVueLoginButtonProps();
 
@@ -99,7 +102,7 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertEquals('email,public_profile', $props['scope']);
     }
 
-    public function test_get_react_login_button_props_returns_array()
+    public function test_get_react_login_button_props_returns_array(): void
     {
         $props = $this->loginService->getReactLoginButtonProps();
 
@@ -109,13 +112,19 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertEquals('email,public_profile', $props['scope']);
     }
 
-    public function test_validate_access_token_returns_true_for_valid_token()
+    public function test_validate_access_token_returns_true_for_valid_token(): void
     {
-        $mockResponse = Mockery::mock();
-        $mockResponse->shouldReceive('get')
-            ->with('data.is_valid')
-            ->andReturn(true);
+        // Create a real FacebookResponse with the data we need
+        $responseData = [
+            'data' => [
+                'is_valid' => true,
+                'app_id' => 'test_app_id',
+                'user_id' => '12345',
+            ],
+        ];
+        $mockResponse = new FacebookResponse($responseData);
 
+        /** @phpstan-ignore-next-line */
         $this->mockFacebookApi->shouldReceive('debugToken')
             ->with('valid_token')
             ->andReturn($mockResponse);
@@ -125,13 +134,19 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_validate_access_token_returns_false_for_invalid_token()
+    public function test_validate_access_token_returns_false_for_invalid_token(): void
     {
-        $mockResponse = Mockery::mock();
-        $mockResponse->shouldReceive('get')
-            ->with('data.is_valid')
-            ->andReturn(false);
+        // Create a real FacebookResponse with invalid token data
+        $responseData = [
+            'data' => [
+                'is_valid' => false,
+                'app_id' => 'test_app_id',
+                'user_id' => null,
+            ],
+        ];
+        $mockResponse = new FacebookResponse($responseData);
 
+        /** @phpstan-ignore-next-line */
         $this->mockFacebookApi->shouldReceive('debugToken')
             ->with('invalid_token')
             ->andReturn($mockResponse);
@@ -141,8 +156,9 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_validate_access_token_returns_false_on_exception()
+    public function test_validate_access_token_returns_false_on_exception(): void
     {
+        /** @phpstan-ignore-next-line */
         $this->mockFacebookApi->shouldReceive('debugToken')
             ->with('error_token')
             ->andThrow(new \Exception('API Error'));
@@ -152,14 +168,17 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_get_user_profile_returns_user_data()
+    public function test_get_user_profile_returns_user_data(): void
     {
-        $mockResponse = Mockery::mock();
-        $mockResponse->shouldReceive('isSuccessful')
-            ->andReturn(true);
-        $mockResponse->shouldReceive('getData')
-            ->andReturn(['id' => '123', 'name' => 'John Doe']);
+        // Create a real FacebookResponse with user data
+        $responseData = [
+            'id' => '123',
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+        ];
+        $mockResponse = new FacebookResponse($responseData);
 
+        /** @phpstan-ignore-next-line */
         $this->mockFacebookApi->shouldReceive('get')
             ->with('/me', Mockery::type('array'), 'user_token')
             ->andReturn($mockResponse);
@@ -171,12 +190,18 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertEquals('John Doe', $userProfile['name']);
     }
 
-    public function test_get_user_profile_returns_empty_array_on_failure()
+    public function test_get_user_profile_returns_empty_array_on_failure(): void
     {
-        $mockResponse = Mockery::mock();
-        $mockResponse->shouldReceive('isSuccessful')
-            ->andReturn(false);
+        // Create a real FacebookResponse with error data
+        $responseData = [
+            'error' => [
+                'message' => 'Invalid access token',
+                'code' => 190,
+            ],
+        ];
+        $mockResponse = new FacebookResponse($responseData, [], 400);
 
+        /** @phpstan-ignore-next-line */
         $this->mockFacebookApi->shouldReceive('get')
             ->with('/me', Mockery::type('array'), 'user_token')
             ->andReturn($mockResponse);
@@ -187,8 +212,9 @@ class FacebookLoginServiceTest extends TestCase
         $this->assertEmpty($userProfile);
     }
 
-    public function test_get_user_profile_returns_empty_array_on_exception()
+    public function test_get_user_profile_returns_empty_array_on_exception(): void
     {
+        /** @phpstan-ignore-next-line */
         $this->mockFacebookApi->shouldReceive('get')
             ->with('/me', Mockery::type('array'), 'user_token')
             ->andThrow(new \Exception('API Error'));

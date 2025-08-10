@@ -75,4 +75,9 @@ interface FacebookGraphApiInterface
      * Get the app secret
      */
     public function getAppSecret(): string;
+
+    /**
+     * Debug an access token to get information about it
+     */
+    public function debugToken(string $accessToken): FacebookResponse;
 }
