@@ -10,6 +10,7 @@ A comprehensive Laravel package for Facebook Graph API with modern design patter
 
 - **🔄 Laravel 10-12 Support**: Compatible with the latest Laravel versions
 - **📊 Complete Graph API Coverage**: All Facebook Graph API operations supported
+- **🔐 Facebook Login Integration**: Complete JavaScript SDK integration for web applications
 - **🛡️ Robust Error Handling**: Comprehensive exception handling with detailed error messages
 - **⚡ Caching Support**: Built-in response caching for better performance
 - **📝 Logging**: Detailed request/response logging for debugging
@@ -19,6 +20,7 @@ A comprehensive Laravel package for Facebook Graph API with modern design patter
 - **🔄 Token Management**: Long-lived token exchange and validation
 - **📈 Insights & Analytics**: Page insights and analytics support
 - **🔒 Security**: App secret proof and secure token handling
+- **🎨 Frontend Framework Support**: Ready-to-use components for Blade, Vue.js, and React
 
 ## 🚀 Installation
 
@@ -57,6 +59,92 @@ FACEBOOK_CACHE_TTL=3600
 ```
 
 ## 📖 Usage
+
+### Facebook Login Integration
+
+The package now includes complete Facebook Login for the Web with JavaScript SDK support, making it easy to implement Facebook authentication in your applications.
+
+#### Quick Start - Blade Templates
+
+```php
+// In your Blade template
+<x-facebook-graph-api::facebook-login-button 
+    :options="[
+        'scope' => 'email,public_profile,pages_manage_posts',
+        'data-width' => '400',
+        'data-size' => 'large'
+    ]"
+/>
+
+// Or using the facade
+{!! FacebookLogin::renderCompleteBladeImplementation() !!}
+```
+
+#### Vue.js Integration
+
+```vue
+<template>
+  <FacebookLoginButton 
+    :options="facebookOptions"
+    @login-success="handleLoginSuccess"
+    @server-response="handleServerResponse"
+  />
+</template>
+
+<script>
+import FacebookLoginButton from './FacebookLoginButton.vue';
+
+export default {
+  components: { FacebookLoginButton },
+  data() {
+    return {
+      facebookOptions: {
+        scope: 'email,public_profile',
+        dataWidth: '400'
+      }
+    };
+  },
+  methods: {
+    handleLoginSuccess(data) {
+      console.log('Login successful:', data);
+    }
+  }
+};
+</script>
+```
+
+#### React Integration
+
+```jsx
+import FacebookLoginButton from './FacebookLoginButton';
+
+const FacebookLogin = () => {
+  const handleLoginSuccess = (data) => {
+    console.log('Login successful:', data);
+  };
+  
+  return (
+    <FacebookLoginButton 
+      options={{ scope: 'email,public_profile' }}
+      onLoginSuccess={handleLoginSuccess}
+    />
+  );
+};
+```
+
+#### Server-Side Token Validation
+
+```php
+use Harryes\FacebookGraphApi\Facades\FacebookLogin;
+
+// Validate access token
+if (FacebookLogin::validateAccessToken($accessToken)) {
+    // Get user profile
+    $userProfile = FacebookLogin::getUserProfile($accessToken);
+    
+    // Process login...
+}
+```
 
 ### Basic Usage
 
@@ -398,6 +486,17 @@ class FacebookTest extends TestCase
 - `put(string $endpoint, array $data = [], ?string $accessToken = null)`
 - `delete(string $endpoint, ?string $accessToken = null)`
 - `upload(string $endpoint, string $filePath, array $data = [], ?string $accessToken = null)`
+
+### Facebook Login Methods
+
+- `FacebookLogin::renderLoginButton(array $options = [])` - Generate login button HTML
+- `FacebookLogin::renderSdkScript()` - Generate Facebook SDK initialization script
+- `FacebookLogin::renderHelperScripts()` - Generate JavaScript helper functions
+- `FacebookLogin::renderCompleteBladeImplementation()` - Complete implementation for Blade
+- `FacebookLogin::renderVueImplementation()` - Complete implementation for Vue.js
+- `FacebookLogin::renderReactImplementation()` - Complete implementation for React
+- `FacebookLogin::validateAccessToken(string $accessToken)` - Validate access token
+- `FacebookLogin::getUserProfile(string $accessToken)` - Get user profile from token
 
 ### User Methods
 

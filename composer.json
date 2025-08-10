@@ -46,7 +46,8 @@
                 "Harryes\\FacebookGraphApi\\FacebookGraphApiServiceProvider"
             ],
             "aliases": {
-                "FacebookGraph": "Harryes\\FacebookGraphApi\\Facades\\FacebookGraph"
+                "FacebookGraph": "Harryes\\FacebookGraphApi\\Facades\\FacebookGraph",
+                "FacebookLogin": "Harryes\\FacebookGraphApi\\Facades\\FacebookLogin"
             }
         }
     },

@@ -33,6 +33,18 @@ class FacebookGraphApiServiceProvider extends ServiceProvider
         $this->app->singleton('facebook-graph-api', function ($app) {
             return $app->make(FacebookGraphApiInterface::class);
         });
+
+        // Register Facebook Login Service
+        $this->app->singleton('facebook-login', function ($app) {
+            return new \Harryes\FacebookGraphApi\Services\FacebookLoginService(
+                $app->make(FacebookGraphApiInterface::class)
+            );
+        });
+
+        // Register Blade Components
+        $this->loadViewComponentsAs('facebook-graph-api', [
+            \Harryes\FacebookGraphApi\View\Components\FacebookLoginButton::class,
+        ]);
     }
 
     /**
